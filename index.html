@@ -12,7 +12,6 @@
     .accordion-content.open { max-height: 500px; opacity: 1; }
     .view-hidden { display: none !important; }
     body { transition: background-color 0.3s ease, color 0.3s ease; }
-    section, article, div, button { transition: background-color 0.2s ease, border-color 0.2s ease; }
   </style>
 </head>
 <body id="master-body" class="bg-slate-900 text-slate-100 font-sans min-h-screen antialiased">
@@ -25,27 +24,14 @@
     </div>
   </div>
 
-  <script>
-    try {
-      const fotoInicioLocal = localStorage.getItem('cache_img_loading');
-      if (fotoInicioLocal) {
-        document.getElementById('loading-screen').style.backgroundImage = `url('${fotoInicioLocal}')`;
-        document.getElementById('loading-filter').style.backgroundColor = "rgba(15, 23, 42, 0.65)";
-      }
-    } catch(e) {}
-  </script>
-
   <input type="file" id="image-picker" accept="image/*" class="hidden">
   <input type="file" id="bg-picker-global" accept="image/*" class="hidden">
 
   <div id="view-home" class="max-w-md mx-auto p-4 pb-24">
     <header class="flex justify-between items-center mb-6 pt-2">
-      <div class="flex items-center gap-2">
-        <button onclick="dispararCargaImagenCarga()" class="h-7 w-7 bg-slate-800 text-slate-400 rounded-lg flex items-center justify-center border border-slate-700/50 text-xs shadow-sm"><i class="fa-solid fa-plus"></i></button>
-        <div>
-          <h1 class="text-xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-200 uppercase">TERRAZA TROMPETERA</h1>
-          <p class="text-xs text-slate-400 font-mono">v5.9.10 Production Stable</p>
-        </div>
+      <div>
+        <h1 class="text-xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-200 uppercase">TERRAZA TROMPETERA</h1>
+        <p class="text-xs text-slate-400 font-mono">v5.9.11 Native Stable</p>
       </div>
       <span class="px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-sm font-mono">GITHUB LIVE</span>
     </header>
@@ -64,7 +50,7 @@
             <span class="text-2xl font-black text-white block temp-ui" id="avg-temp">--°</span>
             <span class="text-xs text-slate-400 font-medium sub-ui"><i class="fa-solid fa-droplet text-cyan-400 mr-1"></i><span id="avg-hum">--</span>% HR</span>
           </div>
-          <i id="clima-arrow" class="fa-solid fa-chevron-down text-slate-500 text-sm"></i>
+          <i id="clima-arrow" class="fa-solid fa-chevron-down text-slate-500 transition-transform duration-300 text-sm"></i>
         </div>
       </div>
       <div id="clima-accordion" class="accordion-content bg-slate-900/40 border-t border-slate-700/30">
@@ -87,7 +73,7 @@
 
     <div class="mb-4"><h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest px-1 mb-3 tag-lbl">Macetas y Sustrato</h3></div>
     <section class="space-y-4">
-      <article onclick="abrirDetalle('al_jazz', 'AL JAZZ', 'bg-emerald-500')" id="card-al_jazz" class="relative bg-slate-800 border border-slate-700/60 rounded-2xl p-4 shadow-md card-ui">
+      <article onclick="abrirDetalle('al_jazz', 'AL JAZZ', 'bg-emerald-500')" id="card-al_jazz" class="relative bg-slate-800 border border-slate-700/60 rounded-2xl p-4 shadow-md card-ui cursor-pointer">
         <div class="flex justify-between items-center mb-1">
           <h4 class="text-base font-bold text-white tracking-tight flex items-center gap-2 title-ui">AL JAZZ</h4>
           <span class="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/10 batt-ui"><span id="al_jazz-battery">--</span>%</span>
@@ -101,7 +87,7 @@
         </div>
       </article>
 
-      <article onclick="abrirDetalle('genin', 'GENÍN', 'bg-teal-500')" id="card-genin" class="relative bg-slate-800 border border-slate-700/60 rounded-2xl p-4 shadow-md card-ui">
+      <article onclick="abrirDetalle('genin', 'GENÍN', 'bg-teal-500')" id="card-genin" class="relative bg-slate-800 border border-slate-700/60 rounded-2xl p-4 shadow-md card-ui cursor-pointer">
         <div class="flex justify-between items-center mb-1">
           <h4 class="text-base font-bold text-white tracking-tight flex items-center gap-2 title-ui">GENÍN</h4>
           <span class="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/10 batt-ui"><span id="genin-battery">--</span>%</span>
@@ -115,7 +101,7 @@
         </div>
       </article>
 
-      <article onclick="abrirDetalle('plumbago', 'PLUMBAGO', 'bg-blue-500')" id="card-plumbago" class="relative bg-slate-800 border border-slate-700/60 rounded-2xl p-4 shadow-md card-ui">
+      <article onclick="abrirDetalle('plumbago', 'PLUMBAGO', 'bg-blue-500')" id="card-plumbago" class="relative bg-slate-800 border border-slate-700/60 rounded-2xl p-4 shadow-md card-ui cursor-pointer">
         <div class="flex justify-between items-center mb-1">
           <h4 class="text-base font-bold text-white tracking-tight flex items-center gap-2 title-ui">PLUMBAGO</h4>
           <span class="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/10 batt-ui"><span id="plumbago-battery">--</span>%</span>
@@ -207,7 +193,7 @@
     let sensoresSeleccionados = []; let contextoOrigenEsClima = false; let filtroTiempoActivo = 'dia'; 
     let plantaEnFocoParaUmbrales = null; let diccionarioRangosSheet2 = null; let visualLightMode = false;
 
-    const SIMBOLOS_UNIDADES = { temp: "C", moisture: "%", humidity: "%", fertility: " uS", lux: " Lux", battery: "%" };
+    const SIMBOLOS_UNIDADES = { temp: "ºC", moisture: "%", humidity: "%", fertility: " µS", lux: " Lux", battery: "%" };
     const COLORES_VARIABLES = { temp: { linea: "#ef4444" }, moisture: { linea: "#3b82f6" }, humidity: { linea: "#3b82f6" }, fertility: { linea: "#10b981" }, lux: { linea: "#eab308" }, battery: { linea: "#f59e0b" } };
 
     const RANGOS_AGRICOLAS = {
@@ -224,8 +210,7 @@
       if (loader) { loader.classList.add('opacity-0'); setTimeout(() => loader.remove(), 300); }
     }
 
-    // Fail-safe inmediato físico de apertura (300ms)
-    setTimeout(() => { forzarApagadoSpinner(); }, 300);
+    setTimeout(() => { forzarApagadoSpinner(); }, 400);
 
     async function cargarDatosMeteo() {
       try {
@@ -234,15 +219,6 @@
         if (!baseDatosCache || !baseDatosCache.success) { forzarApagadoSpinner(); return; }
         
         diccionarioRangosSheet2 = baseDatosCache.rangosSheet2;
-
-        if (baseDatosCache.appConfig) {
-          let imgCargaBase64 = baseDatosCache.appConfig.img_loading;
-          if(imgCargaBase64) {
-            localStorage.setItem('cache_img_loading', imgCargaBase64);
-            const screen = document.getElementById('loading-screen');
-            if(screen) screen.style.backgroundImage = `url('${imgCargaBase64}')`;
-          }
-        }
 
         document.getElementById('avg-temp').innerText = baseDatosCache.clima.avg_temp + "°";
         document.getElementById('avg-hum').innerText = baseDatosCache.clima.avg_hum;
@@ -268,6 +244,7 @@
       }
     }
 
+    // 🛡️ MOTOR DE NAVEGACIÓN ClÁSICO NATIVO BLINDADO (Arregla el bloqueo táctil de iOS)
     function abrirDetalle(idSensor, nombreVisible, colorClase) { contextoOrigenEsClima = false; idSensorActivo = idSensor; ejecutarTransicionDetalle(nombreVisible, colorClase); }
     function abrirDetalleClima(idSensor, nombreVisible) { contextoOrigenEsClima = true; idSensorActivo = idSensor; ejecutarTransicionDetalle(nombreVisible, "bg-amber-500"); }
 
@@ -276,8 +253,10 @@
       const dot = document.getElementById('detail-dot'); dot.className = `h-2 w-2 rounded-full ${colorClase}`;
       
       actualizarValoresPantallaDetalle();
-      document.getElementById('view-home').className = 'max-w-md mx-auto p-4 pb-24 view-hidden'; 
-      document.getElementById('view-detail').className = 'max-w-md mx-auto p-4 pb-24';
+      
+      // Control de visibilidad estricto por clases nativas
+      document.getElementById('view-home').classList.add('view-hidden'); 
+      document.getElementById('view-detail').classList.remove('view-hidden');
       window.scrollTo(0, 0);
     }
 
@@ -297,11 +276,11 @@
     function abrirPantallaGrafica(variable) {
       variableActiva = variable; filtroTiempoActivo = 'dia'; sensoresSeleccionados = [idSensorActivo]; plantaEnFocoParaUmbrales = idSensorActivo; 
       
-      let titMap = { temp: "TEMPERATURA", moisture: "HUMEDAD SUSTRATO", humidity: "HUMEDAD AMBIENTE", fertility: "FERTILIDAD", lux: "LUMINOSIDAD (LUX)", battery: "BATERÍA" };
+      let titMap = { temp: "TEMPERATURA", moisture: "HUMEDAD SUST.", humidity: "HUMEDAD AMBIENTE", fertility: "FERTILIDAD", lux: "LUMINOSIDAD (LUX)", battery: "BATERÍA" };
       document.getElementById('chart-variable-title').innerText = titMap[variable] || variable.toUpperCase();
       
-      document.getElementById('view-detail').className = 'max-w-md mx-auto p-4 pb-24 view-hidden'; 
-      document.getElementById('view-charts').className = 'max-w-md mx-auto p-4 pb-24';
+      document.getElementById('view-detail').classList.add('view-hidden'); 
+      document.getElementById('view-charts').classList.remove('view-hidden');
       cambiarFiltroTiempo('dia');
     }
 
@@ -471,7 +450,7 @@
         };
       });
 
-      let finalMinY = 0; // 🛡️ ORIGEN VERTICAL EN 0 ABSOLUTO
+      let finalMinY = 0; 
       let esPorcentaje = variableActiva === 'moisture' || variableActiva === 'humidity' || variableActiva === 'battery';
       let finalMaxY = esPorcentaje ? 100 : 50;
 
@@ -487,7 +466,7 @@
             legend: { display: false },
             tooltip: {
               enabled: true, mode: 'index', intersect: false,
-              callbacks: { label: function(context) { return `Media Real: ${Number(context.raw).toFixed(2)} º${unidadMedida}`; } }
+              callbacks: { label: function(context) { return `Media Real: ${Number(context.raw).toFixed(2)} ${unidadMedida}`; } }
             }
           },
           scales: {
@@ -499,10 +478,9 @@
     }
 
     function cambiarFiltroTiempo(filtro) { filtroTiempoActivo = filtro; ['dia', 'mes', 'ano'].forEach(f => { const btn = document.getElementById(`btn-time-${f}`); if(btn) btn.className = f === filtro ? "py-2 rounded-lg text-xs font-bold bg-slate-700 text-white uppercase tracking-wider" : "py-2 rounded-lg text-xs font-medium text-slate-400 uppercase tracking-wider"; }); renderizarPildorasSelectoras(); construirGraficoAnalitico(); }
-    function volverAHome() { idSensorActivo = null; document.getElementById('view-detail').className = 'max-w-md mx-auto p-4 pb-24 view-hidden'; document.getElementById('view-home').className = 'max-w-md mx-auto p-4 pb-24'; if(baseDatosCache) cargarDatosMeteo(); }
-    function volverADetalle() { document.getElementById('view-charts').className = 'max-w-md mx-auto p-4 pb-24 view-hidden'; document.getElementById('view-detail').className = 'max-w-md mx-auto p-4 pb-24'; }
+    function volverAHome() { idSensorActivo = null; document.getElementById('view-detail').classList.add('view-hidden'); document.getElementById('view-home').classList.remove('view-hidden'); if(baseDatosCache) cargarDatosMeteo(); }
+    function volverADetalle() { document.getElementById('view-charts').classList.add('view-hidden'); document.getElementById('view-detail').classList.remove('view-hidden'); }
     
-    // 🛡️ SINTAXIS LIMPIA PARA EL ACORDEÓN DE CLIMA AMBIENTE
     function toggleAcordeonMonitorizacion() { 
       const acc = document.getElementById('monitor-accordion'); 
       const arrow = document.getElementById('monitor-arrow'); 
@@ -535,7 +513,6 @@
       if(miGraficoChartJS) construirGraficoAnalitico();
     }
 
-    // 🛡️ EVENTO DOMCONTENTLOADED SANEADO Y SIN TYPOS DE TEXTO
     window.addEventListener('DOMContentLoaded', () => {
       cargarDatosMeteo();
       const elClima = document.getElementById('clima-header');
