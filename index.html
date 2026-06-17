@@ -20,7 +20,7 @@
 </head>
 <body id="master-body" class="bg-slate-900 text-slate-100 font-sans min-h-screen antialiased">
 
-  <!-- PANTALLA DE CARGA INICIAL INTERACTIVA -->
+  <!-- PANTALLA DE CARGA INICIAL INTERACTIVA CON RENDERIZADO INMEDIATO -->
   <div id="loading-screen" class="fixed inset-0 bg-slate-900 z-50 flex flex-col justify-center items-center gap-4 transition-opacity duration-500 bg-cover bg-center">
     <div id="loading-filter" class="absolute inset-0 bg-slate-900/80 z-0"></div>
     <div class="relative z-10 flex flex-col items-center gap-4">
@@ -28,6 +28,16 @@
       <p class="text-xs font-mono text-slate-400 tracking-widest animate-pulse uppercase">CONECTANDO WITH METEO_CLOUD...</p>
     </div>
   </div>
+
+  <!-- INYECCIÓN SÍNCRONA DE CACHÉ LOCAL (Evita parpadeos en blanco) -->
+  <script>
+    const fotoInicioLocal = localStorage.getItem('cache_img_loading');
+    if (fotoInicioLocal) {
+      const screen = document.getElementById('loading-screen');
+      screen.style.backgroundImage = `url('${fotoInicioLocal}')`;
+      document.getElementById('loading-filter').style.backgroundColor = "rgba(15, 23, 42, 0.65)";
+    }
+  </script>
 
   <input type="file" id="image-picker" accept="image/*" class="hidden">
   <input type="file" id="bg-picker-global" accept="image/*" class="hidden">
@@ -39,7 +49,7 @@
         <button onclick="dispararCargaImagenCarga()" class="h-7 w-7 bg-slate-800 text-slate-400 rounded-lg flex items-center justify-center border border-slate-700/50 text-xs shadow-sm"><i class="fa-solid fa-plus"></i></button>
         <div>
           <h1 class="text-xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-200 uppercase">TERRAZA TROMPETERA</h1>
-          <p class="text-xs text-slate-400 font-mono">v5.9.3 Guard Spec</p>
+          <p class="text-xs text-slate-400 font-mono">v5.9.5 Precision Unified</p>
         </div>
       </div>
       <span class="px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-sm font-mono">GITHUB LIVE</span>
@@ -136,7 +146,7 @@
       </article>
     </section>
 
-    <!-- LIGHT / DARK MODE BUTTON -->
+    <!-- LIGHT / DARK MODE TOGGLE BUTTON -->
     <div class="fixed bottom-4 left-0 right-0 flex justify-center z-40">
       <button onclick="toggleVisualMode()" class="px-5 py-2.5 bg-slate-800 text-white rounded-full border border-slate-700 font-bold text-xs tracking-wider uppercase flex items-center gap-2 shadow-2xl transition-all hover:scale-105" id="btn-mode-toggle">
         <i class="fa-solid fa-sun text-amber-400" id="icon-mode"></i> <span id="lbl-mode-btn">Light Mode</span>
@@ -240,7 +250,7 @@
     </div>
   </div>
 
-  <!-- CORE MAESTRO SANEADO v5.9.3 -->
+  <!-- CORE INTELECTUAL REFINADO v5.9.5 -->
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbyi6HCYPtqU1sCDY4UTZIkVKSmE4PaQciTVSlPjUY7yp21EgD-4cipP-_6tJxK8L88iiA/exec";
     let baseDatosCache = null; let idSensorActivo = null; let variableActiva = null; let miGraficoChartJS = null;
@@ -264,6 +274,9 @@
       if (loader) { loader.classList.add('opacity-0'); setTimeout(() => loader.remove(), 500); }
     }
 
+    // Guard preventivo físico
+    setTimeout(() => { forzarApagadoSpinner(); }, 1600);
+
     async function cargarDatosMeteo() {
       try {
         const respuesta = await fetch(`${API_URL}?_cb=${new Date().getTime()}`);
@@ -276,10 +289,12 @@
             let txt = baseDatosCache.appConfig[`txt_${k}`] || "Ficha Técnica en Vivo";
             let el = document.getElementById(`lbl-${k}-sub`); if (el) el.innerText = txt;
           });
+          
+          // 🛡️ SINCRONIZADOR DE IMAGEN EN DOBLE CAPA (Local + Remoto)
           let imgCargaBase64 = baseDatosCache.appConfig.img_loading;
           if(imgCargaBase64) {
+            localStorage.setItem('cache_img_loading', imgCargaBase64); // Guardamos en memoria local para el siguiente arranque
             document.getElementById('loading-screen').style.backgroundImage = `url('${imgCargaBase64}')`;
-            document.getElementById('loading-filter').style.backgroundColor = "rgba(15, 23, 42, 0.65)";
           }
         }
 
@@ -304,7 +319,7 @@
         forzarApagadoSpinner();
         if (idSensorActivo) actualizarValoresPantallaDetalle();
       } catch (error) { 
-        console.error("Fallo de red mitigado:", error);
+        console.error(error);
         forzarApagadoSpinner();
       }
     }
@@ -359,7 +374,9 @@
           if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
           canvas.width = width; canvas.height = height; const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, width, height);
           const compressedBase64 = canvas.toDataURL('image/jpeg', 0.4);
-          fetch(API_URL, { method: "POST", body: JSON.stringify({ clave: "img_loading", valor: compressedBase64 }) }).then(r => r.json()).then(res => { if(res.success) alert("Pantalla de inicio compartida."); });
+          
+          localStorage.setItem('cache_img_loading', compressedBase64); // Forzado local inmediato
+          fetch(API_URL, { method: "POST", body: JSON.stringify({ clave: "img_loading", valor: compressedBase64 }) }).then(r => r.json()).then(res => { if(res.success) alert("Pantalla de inicio compartida e inyectada."); });
         }; img.src = event.target.result;
       }; reader.readAsDataURL(file);
     });
@@ -397,7 +414,7 @@
       renderizarPildorasSelectoras(); construirGraficoAnalitico();
     }
 
-    // 🛡️ MOTOR DE GRÁFICAS DE PRECISIÓN ABSOLUTA v5.9.3 (Bucle corregido de forma estricta)
+    // 🛡️ TRADUCTOR MULTIVISTA INTEGRAL v5.9.5 (Soluciona las curvas de temperatura invisibles)
     function construirGraficoAnalitico() {
       const ctx = document.getElementById('canvas-chart-js').getContext('2d'); if (miGraficoChartJS) miGraficoChartJS.destroy();
       const unidadMedida = SIMBOLOS_UNIDADES[variableActiva] || ""; const configuracionColor = COLORES_VARIABLES[variableActiva];
@@ -425,13 +442,19 @@
           
           registros.forEach(nodo => {
             let f = new Date(nodo.f);
-            if (isNaN(f.getTime())) return; // Sanitización de strings corruptas de Google Drive
+            if (isNaN(f.getTime())) return; 
             let h = f.getHours();
             if (!acumuladorPorHora[h]) acumuladorPorHora[h] = {};
             
             sensoresSeleccionados.forEach(id => {
               if (!acumuladorPorHora[h][id]) acumuladorPorHora[h][id] = [];
-              let val = variableActiva === 'bateria' ? nodo[id].battery : (variableActiva === 'humedad' ? (nodo[id].moisture !== undefined ? nodo[id].moisture : nodo[id].hum) : nodo[id][variableActiva || 'temp']);
+              
+              let val = null;
+              if (variableActiva === 'bateria') val = nodo[id].battery;
+              else if (variableActiva === 'humedad') val = nodo[id].moisture !== undefined ? nodo[id].moisture : nodo[id].hum;
+              else if (variableActiva === 'temperatura') val = nodo[id].temp;
+              else val = nodo[id][variableActiva];
+              
               if (val !== null && val !== undefined && val !== 0) {
                 acumuladorPorHora[h][id].push(val);
                 if (h > ultimaHoraConDatos) ultimaHoraConDatos = h;
@@ -465,7 +488,14 @@
             if (!acumuladorPorDia[d]) acumuladorPorDia[d] = {};
             sensoresSeleccionados.forEach(id => {
               if (!acumuladorPorDia[d][id]) acumuladorPorDia[d][id] = [];
-              let val = variableActiva === 'bateria' ? nodo[id].battery : (variableActiva === 'humedad' ? (nodo[id].moisture !== undefined ? nodo[id].moisture : nodo[id].hum) : nodo[id][variableActiva || 'temp']);
+              
+              // 🛡️ UNIFICACIÓN FIJA DE VARIABLES AGREGADAS (MES)
+              let val = null;
+              if (variableActiva === 'bateria') val = nodo[id].battery;
+              else if (variableActiva === 'humedad') val = nodo[id].moisture !== undefined ? nodo[id].moisture : nodo[id].hum;
+              else if (variableActiva === 'temperatura') val = nodo[id].temp;
+              else val = nodo[id][variableActiva];
+              
               if (val !== null && val !== undefined && val !== 0) {
                 acumuladorPorDia[d][id].push(val);
                 if (d > ultimoDiaConDatos) ultimoDiaConDatos = d;
@@ -500,7 +530,14 @@
             if (!acumuladorPorMes[xPos]) acumuladorPorMes[xPos] = {};
             sensoresSeleccionados.forEach(id => {
               if (!acumuladorPorMes[xPos][id]) acumuladorPorMes[xPos][id] = [];
-              let val = variableActiva === 'bateria' ? nodo[id].battery : (variableActiva === 'humedad' ? (nodo[id].moisture !== undefined ? nodo[id].moisture : nodo[id].hum) : nodo[id][variableActiva || 'temp']);
+              
+              // 🛡️ UNIFICACIÓN FIJA DE VARIABLES AGREGADAS (AÑO)
+              let val = null;
+              if (variableActiva === 'bateria') val = nodo[id].battery;
+              else if (variableActiva === 'humedad') val = nodo[id].moisture !== undefined ? nodo[id].moisture : nodo[id].hum;
+              else if (variableActiva === 'temperatura') val = nodo[id].temp;
+              else val = nodo[id][variableActiva];
+              
               if (val !== null && val !== undefined && val !== 0) {
                 acumuladorPorMes[xPos][id].push(val);
                 if (xPos > ultimoMesConDatos) ultimoMesConDatos = xPos;
@@ -553,7 +590,7 @@
         };
       });
 
-      let finalMinY = 0; // 🛡️ ORIGEN DEL EJE VERTICAL CLAVADO EN 0
+      let finalMinY = 0; 
       let finalMaxY = (variableActiva === 'humedad' || variableActiva === 'bateria') ? 100 : rango.max;
 
       if (totalPuntosEnCanvas.length > 0 && variableActiva !== 'humedad' && variableActiva !== 'bateria') {
@@ -639,14 +676,12 @@
     function cargarFotoEnTarjetaHome(idSensor) { const card = document.getElementById(`card-${idSensor}`); const overlay = document.getElementById(`overlay-${idSensor}`); const fotoGuardada = localStorage.getItem(`foto_${idSensor}`); if (card && fotoGuardada) { card.style.backgroundImage = `url('${fotoGuardada}')`; if (overlay) overlay.style.opacity = "0.85"; } else if (card) { card.style.backgroundImage = 'none'; if (overlay) overlay.style.opacity = "0"; } }
     function establecerFotoPantalla(base64Str) { document.getElementById('plant-image-bg').style.backgroundImage = `url('${base64Str}')`; document.getElementById('plant-image-placeholder').classList.add('view-hidden'); }
 
-    // 🛡️ PATRÓN DE CARGA SEGURO EN DOMCONTENTLOADED
     window.addEventListener('DOMContentLoaded', () => {
       cargarDatosMeteo();
-      
       document.getElementById('clima-header').addEventListener('click', () => {
         const acc = document.getElementById('clima-accordion'); const arrow = document.getElementById('clima-arrow');
         if (acc.classList.contains('open')) { acc.classList.remove('open'); arrow.classList.remove('rotate-180'); } 
-        else { acc.classList.add('open'); arrow.classList.add('rotate-180'); }
+        else { acc.classList.add('open'); arrow.mathbf('rotate-180'); }
       });
     });
   </script>
