@@ -36,7 +36,7 @@
         <button onclick="dispararCargaImagenCarga()" class="h-7 w-7 bg-slate-800 text-slate-400 rounded-lg flex items-center justify-center border border-slate-700/50 text-xs shadow-sm"><i class="fa-solid fa-plus"></i></button>
         <div>
           <h1 class="text-xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-200 uppercase">TERRAZA TROMPETERA</h1>
-          <p class="text-xs text-slate-400 font-mono">v5.9.1 Strict Engine</p>
+          <p class="text-xs text-slate-400 font-mono">v5.9.2 Fixed Engine</p>
         </div>
       </div>
       <span class="px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-sm font-mono">GITHUB LIVE</span>
@@ -237,10 +237,12 @@
     </div>
   </div>
 
-  <!-- MASTER CODE JAVASCRIPT FIXED v5.9.1 -->
+  <!-- JAVASCRIPT MASTER CORE v5.9.2 FIXED -->
   <script>
-    // 🛡️ API URL BLINDADA
     const API_URL = "https://script.google.com/macros/s/AKfycbyi6HCYPtqU1sCDY4UTZIkVKSmE4PaQciTVSlPjUY7yp21EgD-4cipP-_6tJxK8L88iiA/exec";
+    let baseDatosCache = null; let idSensorActivo = null; let variableActiva = null; let miGraficoChartJS = null;
+    let sensoresSeleccionados = []; let contextoOrigenEsClima = false; let filtroTiempoActivo = 'dia'; 
+    let plantaEnFocoParaUmbrales = null; let diccionarioRangosSheet2 = null; let visualLightMode = false;
 
     const SIMBOLOS_UNIDADES = { temperatura: "ºC", humedad: "%", fertilidad: " µS", lux: " Lux", bateria: "%" };
     const COLORES_VARIABLES = { temperatura: { linea: "#ef4444" }, humedad: { linea: "#3b82f6" }, fertilidad: { linea: "#10b981" }, lux: { linea: "#eab308" }, bateria: { linea: "#f59e0b" } };
@@ -254,11 +256,20 @@
       fontana: { temperatura: { min: 16, max: 33 }, humedad: { min: 25, max: 75 } }
     };
 
+    // 🛡️ CONTROLADOR DE RESCATE (FAIL-SAFE): Si a los 1.5s no ha cargado, apaga el spinner para no bloquear la app
+    setTimeout(() => {
+      const loader = document.getElementById('loading-screen');
+      if (loader && !loader.classList.contains('opacity-0')) {
+        console.warn("Fail-safe activado: Forzando apagado del spinner.");
+        loader.classList.add('opacity-0'); setTimeout(() => loader.remove(), 500);
+      }
+    }, 1500);
+
     async function cargarDatosMeteo() {
       try {
         const respuesta = await fetch(`${API_URL}?_cb=${new Date().getTime()}`);
         baseDatosCache = await respuesta.json();
-        if (!baseDatosCache.success) throw new Error("API Error");
+        if (!baseDatosCache.success) throw new Error("API Data Error");
         diccionarioRangosSheet2 = baseDatosCache.rangosSheet2;
 
         if (baseDatosCache.appConfig) {
@@ -294,7 +305,7 @@
         const loader = document.getElementById('loading-screen'); if (loader) { loader.classList.add('opacity-0'); setTimeout(() => loader.remove(), 500); }
         if (idSensorActivo) actualizarValoresPantallaDetalle();
       } catch (error) { 
-        console.error(error);
+        console.error("Error en el bus de datos:", error);
         const loader = document.getElementById('loading-screen'); if (loader) { loader.classList.add('opacity-0'); setTimeout(() => loader.remove(), 500); }
       }
     }
@@ -308,7 +319,8 @@
       let fallbackTexto = baseDatosCache && baseDatosCache.appConfig ? (baseDatosCache.appConfig[`txt_${idSensorActivo}`] || "Ficha Técnica en Vivo") : "Ficha Técnica en Vivo";
       document.getElementById('input-sub-libre').value = fallbackTexto;
       actualizarValoresPantallaDetalle(); cargarFotoDeMemoria(idSensorActivo);
-      document.getElementById('view-home').classList.add('view-hidden'); document.getElementById('view-detail').classList.remove('view-hidden');
+      document.getElementById('view-home').className = 'max-w-md mx-auto p-4 pb-24 view-hidden'; 
+      document.getElementById('view-detail').className = 'max-w-md mx-auto p-4 pb-24';
       window.scrollTo(0, 0);
     }
 
@@ -356,7 +368,8 @@
     function abrirPantallaGrafica(variable) {
       variableActiva = variable; filtroTiempoActivo = 'dia'; sensoresSeleccionados = [idSensorActivo]; plantaEnFocoParaUmbrales = idSensorActivo; 
       document.getElementById('chart-variable-title').innerText = variable.toUpperCase();
-      document.getElementById('view-detail').classList.add('view-hidden'); document.getElementById('view-charts').classList.remove('view-hidden');
+      document.getElementById('view-detail').className = 'max-w-md mx-auto p-4 pb-24 view-hidden'; 
+      document.getElementById('view-charts').className = 'max-w-md mx-auto p-4 pb-24';
       cambiarFiltroTiempo('dia');
     }
 
@@ -385,17 +398,16 @@
       renderizarPildorasSelectoras(); construirGraficoAnalitico();
     }
 
-    // 🛡️ REPARACIÓN DEL BUCLE DIARIO FIX v5.9.1
+    // 🛡️ MOTOR GRÁFICO ABSOLUTO v5.9.2 (Saneado completo de bucles)
     function construirGraficoAnalitico() {
       const ctx = document.getElementById('canvas-chart-js').getContext('2d'); if (miGraficoChartJS) miGraficoChartJS.destroy();
       const unidadMedida = SIMBOLOS_UNIDADES[variableActiva] || ""; const configuracionColor = COLORES_VARIABLES[variableActiva];
 
       let etiquetasEjeX = [];
       let mapeoDatosEstructurado = {};
-      let ahoramismo = new Date();
 
       if (filtroTiempoActivo === 'dia') {
-        for (let h = 0; h <= 24; h++) { etiquetasEjeX.push((h < 10 ? '0'+h : h) + ':00'); } // Fix loop
+        for (let h = 0; h <= 24; h++) { etiquetasEjeX.push((h < 10 ? '0'+h : h) + ':00'); }
       } else if (filtroTiempoActivo === 'mes') {
         for (let d = 1; d <= 30; d++) { etiquetasEjeX.push((d < 10 ? '0'+d : d) + '/06'); }
       } else {
@@ -540,7 +552,7 @@
         };
       });
 
-      let finalMinY = 0; // 🛡️ ORIGEN EN 0 FIJO
+      let finalMinY = 0; // 🛡️ EJE Y DESDE 0 SIEMPRE
       let finalMaxY = (variableActiva === 'humedad' || variableActiva === 'bateria') ? 100 : rango.max;
 
       if (totalPuntosEnCanvas.length > 0 && variableActiva !== 'humedad' && variableActiva !== 'bateria') {
@@ -605,8 +617,8 @@
     }
 
     function cambiarFiltroTiempo(filtro) { filtroTiempoActivo = filtro; ['dia', 'mes', 'ano'].forEach(f => { const btn = document.getElementById(`btn-time-${f}`); if(btn) btn.className = f === filtro ? "py-2 rounded-lg text-xs font-bold bg-slate-700 text-white uppercase tracking-wider" : "py-2 rounded-lg text-xs font-medium text-slate-400 uppercase tracking-wider"; }); renderizarPildorasSelectoras(); construirGraficoAnalitico(); }
-    function volverAHome() { idSensorActivo = null; document.getElementById('view-detail').classList.add('view-hidden'); document.getElementById('view-home').classList.remove('view-hidden'); if(baseDatosCache) cargarDatosMeteo(); }
-    function volverADetalle() { document.getElementById('view-charts').classList.add('view-hidden'); document.getElementById('view-detail').classList.remove('view-hidden'); }
+    function volverAHome() { idSensorActivo = null; document.getElementById('view-detail').className = 'max-w-md mx-auto p-4 pb-24 view-hidden'; document.getElementById('view-home').className = 'max-w-md mx-auto p-4 pb-24'; if(baseDatosCache) cargarDatosMeteo(); }
+    function volverADetalle() { document.getElementById('view-charts').className = 'max-w-md mx-auto p-4 pb-24 view-hidden'; document.getElementById('view-detail').className = 'max-w-md mx-auto p-4 pb-24'; }
     function toggleAcordeonMonitorizacion() { const acc = document.getElementById('monitor-accordion'); const arrow = document.getElementById('monitor-arrow'); if (acc.classList.contains('open')) { acc.classList.remove('open'); arrow.classList.remove('rotate-180'); } else { acc.classList.add('open'); arrow.classList.add('rotate-180'); } }
     function dispararCargaImagen() { document.getElementById('image-picker').value = ""; document.getElementById('image-picker').click(); }
 
