@@ -4,8 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Terraza Tromptera - Dashboard IoT</title>
+  <!-- Tailwind CSS Pro -->
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <!-- Iconos FontAwesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Carga de Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     .accordion-content { transition: max-height 0.3s ease-out, opacity 0.2s ease-out; max-height: 0; opacity: 0; overflow: hidden; }
@@ -36,7 +39,7 @@
         <button onclick="dispararCargaImagenCarga()" class="h-7 w-7 bg-slate-800 text-slate-400 rounded-lg flex items-center justify-center border border-slate-700/50 text-xs shadow-sm"><i class="fa-solid fa-plus"></i></button>
         <div>
           <h1 class="text-xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-200 uppercase">TERRAZA TROMPETERA</h1>
-          <p class="text-xs text-slate-400 font-mono">v5.9.2 Fixed Engine</p>
+          <p class="text-xs text-slate-400 font-mono">v5.9.3 Guard Spec</p>
         </div>
       </div>
       <span class="px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-sm font-mono">GITHUB LIVE</span>
@@ -133,7 +136,7 @@
       </article>
     </section>
 
-    <!-- LIGHT / DARK MODE TOGGLE BUTTON -->
+    <!-- LIGHT / DARK MODE BUTTON -->
     <div class="fixed bottom-4 left-0 right-0 flex justify-center z-40">
       <button onclick="toggleVisualMode()" class="px-5 py-2.5 bg-slate-800 text-white rounded-full border border-slate-700 font-bold text-xs tracking-wider uppercase flex items-center gap-2 shadow-2xl transition-all hover:scale-105" id="btn-mode-toggle">
         <i class="fa-solid fa-sun text-amber-400" id="icon-mode"></i> <span id="lbl-mode-btn">Light Mode</span>
@@ -237,7 +240,7 @@
     </div>
   </div>
 
-  <!-- JAVASCRIPT MASTER CORE v5.9.2 FIXED -->
+  <!-- CORE MAESTRO SANEADO v5.9.3 -->
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbyi6HCYPtqU1sCDY4UTZIkVKSmE4PaQciTVSlPjUY7yp21EgD-4cipP-_6tJxK8L88iiA/exec";
     let baseDatosCache = null; let idSensorActivo = null; let variableActiva = null; let miGraficoChartJS = null;
@@ -256,14 +259,10 @@
       fontana: { temperatura: { min: 16, max: 33 }, humedad: { min: 25, max: 75 } }
     };
 
-    // 🛡️ CONTROLADOR DE RESCATE (FAIL-SAFE): Si a los 1.5s no ha cargado, apaga el spinner para no bloquear la app
-    setTimeout(() => {
+    function forzarApagadoSpinner() {
       const loader = document.getElementById('loading-screen');
-      if (loader && !loader.classList.contains('opacity-0')) {
-        console.warn("Fail-safe activado: Forzando apagado del spinner.");
-        loader.classList.add('opacity-0'); setTimeout(() => loader.remove(), 500);
-      }
-    }, 1500);
+      if (loader) { loader.classList.add('opacity-0'); setTimeout(() => loader.remove(), 500); }
+    }
 
     async function cargarDatosMeteo() {
       try {
@@ -302,11 +301,11 @@
           cargarFotoEnTarjetaHome(id);
         });
 
-        const loader = document.getElementById('loading-screen'); if (loader) { loader.classList.add('opacity-0'); setTimeout(() => loader.remove(), 500); }
+        forzarApagadoSpinner();
         if (idSensorActivo) actualizarValoresPantallaDetalle();
       } catch (error) { 
-        console.error("Error en el bus de datos:", error);
-        const loader = document.getElementById('loading-screen'); if (loader) { loader.classList.add('opacity-0'); setTimeout(() => loader.remove(), 500); }
+        console.error("Fallo de red mitigado:", error);
+        forzarApagadoSpinner();
       }
     }
 
@@ -398,7 +397,7 @@
       renderizarPildorasSelectoras(); construirGraficoAnalitico();
     }
 
-    // 🛡️ MOTOR GRÁFICO ABSOLUTO v5.9.2 (Saneado completo de bucles)
+    // 🛡️ MOTOR DE GRÁFICAS DE PRECISIÓN ABSOLUTA v5.9.3 (Bucle corregido de forma estricta)
     function construirGraficoAnalitico() {
       const ctx = document.getElementById('canvas-chart-js').getContext('2d'); if (miGraficoChartJS) miGraficoChartJS.destroy();
       const unidadMedida = SIMBOLOS_UNIDADES[variableActiva] || ""; const configuracionColor = COLORES_VARIABLES[variableActiva];
@@ -426,6 +425,7 @@
           
           registros.forEach(nodo => {
             let f = new Date(nodo.f);
+            if (isNaN(f.getTime())) return; // Sanitización de strings corruptas de Google Drive
             let h = f.getHours();
             if (!acumuladorPorHora[h]) acumuladorPorHora[h] = {};
             
@@ -459,7 +459,7 @@
           
           registros.forEach(nodo => {
             let f = new Date(nodo.f);
-            if (f.getMonth() !== 5) return; 
+            if (isNaN(f.getTime()) || f.getMonth() !== 5) return; 
             let d = f.getDate();
             
             if (!acumuladorPorDia[d]) acumuladorPorDia[d] = {};
@@ -493,6 +493,7 @@
 
           registros.forEach(nodo => {
             let f = new Date(nodo.f);
+            if (isNaN(f.getTime())) return;
             let mIdx = f.getMonth();
             let xPos = (mIdx >= 5) ? (mIdx - 5) : (mIdx + 7);
             
@@ -552,7 +553,7 @@
         };
       });
 
-      let finalMinY = 0; // 🛡️ EJE Y DESDE 0 SIEMPRE
+      let finalMinY = 0; // 🛡️ ORIGEN DEL EJE VERTICAL CLAVADO EN 0
       let finalMaxY = (variableActiva === 'humedad' || variableActiva === 'bateria') ? 100 : rango.max;
 
       if (totalPuntosEnCanvas.length > 0 && variableActiva !== 'humedad' && variableActiva !== 'bateria') {
@@ -638,13 +639,16 @@
     function cargarFotoEnTarjetaHome(idSensor) { const card = document.getElementById(`card-${idSensor}`); const overlay = document.getElementById(`overlay-${idSensor}`); const fotoGuardada = localStorage.getItem(`foto_${idSensor}`); if (card && fotoGuardada) { card.style.backgroundImage = `url('${fotoGuardada}')`; if (overlay) overlay.style.opacity = "0.85"; } else if (card) { card.style.backgroundImage = 'none'; if (overlay) overlay.style.opacity = "0"; } }
     function establecerFotoPantalla(base64Str) { document.getElementById('plant-image-bg').style.backgroundImage = `url('${base64Str}')`; document.getElementById('plant-image-placeholder').classList.add('view-hidden'); }
 
-    document.getElementById('clima-header').addEventListener('click', () => {
-      const acc = document.getElementById('clima-accordion'); const arrow = document.getElementById('clima-arrow');
-      if (acc.classList.contains('open')) { acc.classList.remove('open'); arrow.classList.remove('rotate-180'); } 
-      else { acc.classList.add('open'); arrow.classList.add('rotate-180'); }
+    // 🛡️ PATRÓN DE CARGA SEGURO EN DOMCONTENTLOADED
+    window.addEventListener('DOMContentLoaded', () => {
+      cargarDatosMeteo();
+      
+      document.getElementById('clima-header').addEventListener('click', () => {
+        const acc = document.getElementById('clima-accordion'); const arrow = document.getElementById('clima-arrow');
+        if (acc.classList.contains('open')) { acc.classList.remove('open'); arrow.classList.remove('rotate-180'); } 
+        else { acc.classList.add('open'); arrow.classList.add('rotate-180'); }
+      });
     });
-
-    window.addEventListener('DOMContentLoaded', cargarDatosMeteo);
   </script>
 </body>
 </html>
