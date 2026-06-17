@@ -4,11 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Terraza Tromptera - Dashboard IoT</title>
-  <!-- Tailwind CSS Pro -->
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-  <!-- Iconos FontAwesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- Carga de Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     .accordion-content { transition: max-height 0.3s ease-out, opacity 0.2s ease-out; max-height: 0; opacity: 0; overflow: hidden; }
@@ -20,7 +17,6 @@
 </head>
 <body id="master-body" class="bg-slate-900 text-slate-100 font-sans min-h-screen antialiased">
 
-  <!-- PANTALLA DE CARGA INICIAL INTERACTIVA CON RENDERIZADO INMEDIATO -->
   <div id="loading-screen" class="fixed inset-0 bg-slate-900 z-50 flex flex-col justify-center items-center gap-4 transition-opacity duration-500 bg-cover bg-center">
     <div id="loading-filter" class="absolute inset-0 bg-slate-900/80 z-0"></div>
     <div class="relative z-10 flex flex-col items-center gap-4">
@@ -29,7 +25,6 @@
     </div>
   </div>
 
-  <!-- INYECCIÓN SÍNCRONA DE CACHÉ LOCAL (Evita parpadeos en blanco) -->
   <script>
     const fotoInicioLocal = localStorage.getItem('cache_img_loading');
     if (fotoInicioLocal) {
@@ -42,20 +37,18 @@
   <input type="file" id="image-picker" accept="image/*" class="hidden">
   <input type="file" id="bg-picker-global" accept="image/*" class="hidden">
 
-  <!-- VISTA 1: HOME -->
   <div id="view-home" class="max-w-md mx-auto p-4 pb-24">
     <header class="flex justify-between items-center mb-6 pt-2">
       <div class="flex items-center gap-2">
         <button onclick="dispararCargaImagenCarga()" class="h-7 w-7 bg-slate-800 text-slate-400 rounded-lg flex items-center justify-center border border-slate-700/50 text-xs shadow-sm"><i class="fa-solid fa-plus"></i></button>
         <div>
           <h1 class="text-xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-200 uppercase">TERRAZA TROMPETERA</h1>
-          <p class="text-xs text-slate-400 font-mono">v5.9.5 Precision Unified</p>
+          <p class="text-xs text-slate-400 font-mono">v5.9.6 Build Certified</p>
         </div>
       </div>
       <span class="px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-sm font-mono">GITHUB LIVE</span>
     </header>
 
-    <!-- BLOQUE CLIMÁTICO SUPERIOR -->
     <section class="bg-gradient-to-br from-slate-800 to-slate-750 rounded-2xl border border-slate-700/50 shadow-xl overflow-hidden mb-6 card-ui">
       <div id="clima-header" class="p-5 flex justify-between items-center cursor-pointer select-none">
         <div class="flex items-center gap-4">
@@ -91,7 +84,6 @@
       </div>
     </section>
 
-    <!-- SECCIÓN MACETAS -->
     <div class="mb-4"><h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest px-1 mb-3 tag-lbl">Macetas y Sustrato</h3></div>
     <section class="space-y-4">
       <article onclick="abrirDetalle('al_jazz', 'AL JAZZ', 'bg-emerald-500')" id="card-al_jazz" class="relative bg-slate-800 border border-slate-700/60 rounded-2xl p-4 shadow-md overflow-hidden bg-cover bg-center card-ui">
@@ -146,7 +138,6 @@
       </article>
     </section>
 
-    <!-- LIGHT / DARK MODE TOGGLE BUTTON -->
     <div class="fixed bottom-4 left-0 right-0 flex justify-center z-40">
       <button onclick="toggleVisualMode()" class="px-5 py-2.5 bg-slate-800 text-white rounded-full border border-slate-700 font-bold text-xs tracking-wider uppercase flex items-center gap-2 shadow-2xl transition-all hover:scale-105" id="btn-mode-toggle">
         <i class="fa-solid fa-sun text-amber-400" id="icon-mode"></i> <span id="lbl-mode-btn">Light Mode</span>
@@ -154,7 +145,6 @@
     </div>
   </div>
 
-  <!-- VISTA 2: DETALLE PLANTA -->
   <div id="view-detail" class="max-w-md mx-auto p-4 pb-24 view-hidden">
     <header class="flex items-center gap-4 mb-6 pt-2">
       <button onclick="volverAHome()" class="p-2.5 bg-slate-800 rounded-xl text-slate-400 back-btn"><i class="fa-solid fa-chevron-left text-sm"></i></button>
@@ -216,7 +206,6 @@
     </div>
   </div>
 
-  <!-- VISTA 3: CANVASES DE GRÁFICAS ANALÍTICAS -->
   <div id="view-charts" class="max-w-md mx-auto p-4 pb-24 view-hidden">
     <header class="flex items-center gap-4 mb-4 pt-2">
       <button onclick="volverADetalle()" class="p-2.5 bg-slate-800 rounded-xl text-slate-400 back-btn"><i class="fa-solid fa-chevron-left text-sm"></i></button>
@@ -250,7 +239,6 @@
     </div>
   </div>
 
-  <!-- CORE INTELECTUAL REFINADO v5.9.5 -->
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbyi6HCYPtqU1sCDY4UTZIkVKSmE4PaQciTVSlPjUY7yp21EgD-4cipP-_6tJxK8L88iiA/exec";
     let baseDatosCache = null; let idSensorActivo = null; let variableActiva = null; let miGraficoChartJS = null;
@@ -274,7 +262,7 @@
       if (loader) { loader.classList.add('opacity-0'); setTimeout(() => loader.remove(), 500); }
     }
 
-    // Guard preventivo físico
+    // Guard de seguridad preventivo físico
     setTimeout(() => { forzarApagadoSpinner(); }, 1600);
 
     async function cargarDatosMeteo() {
@@ -290,10 +278,9 @@
             let el = document.getElementById(`lbl-${k}-sub`); if (el) el.innerText = txt;
           });
           
-          // 🛡️ SINCRONIZADOR DE IMAGEN EN DOBLE CAPA (Local + Remoto)
           let imgCargaBase64 = baseDatosCache.appConfig.img_loading;
           if(imgCargaBase64) {
-            localStorage.setItem('cache_img_loading', imgCargaBase64); // Guardamos en memoria local para el siguiente arranque
+            localStorage.setItem('cache_img_loading', imgCargaBase64); 
             document.getElementById('loading-screen').style.backgroundImage = `url('${imgCargaBase64}')`;
           }
         }
@@ -350,7 +337,7 @@
         const sensor = baseDatosCache[idSensorActivo];
         document.getElementById('detail-moisture').innerText = sensor.moisture + "%";
         document.getElementById('detail-temp').innerText = sensor.temp + "°C";
-        document.getElementById('detail-lux').innerText = sensor.lux.toLocaleString('es-ES') + " Lux";
+        document.getElementById('detail-lux').innerText = sensor.lux.toLocaleString('es-ES'] + " Lux";
         document.getElementById('detail-fertility').innerHTML = sensor.fertility + ' <span class="text-[10px] font-normal opacity-60">µS</span>';
         document.getElementById('detail-battery-lbl').innerText = sensor.battery;
       }
@@ -375,7 +362,7 @@
           canvas.width = width; canvas.height = height; const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, width, height);
           const compressedBase64 = canvas.toDataURL('image/jpeg', 0.4);
           
-          localStorage.setItem('cache_img_loading', compressedBase64); // Forzado local inmediato
+          localStorage.setItem('cache_img_loading', compressedBase64); 
           fetch(API_URL, { method: "POST", body: JSON.stringify({ clave: "img_loading", valor: compressedBase64 }) }).then(r => r.json()).then(res => { if(res.success) alert("Pantalla de inicio compartida e inyectada."); });
         }; img.src = event.target.result;
       }; reader.readAsDataURL(file);
@@ -414,7 +401,7 @@
       renderizarPildorasSelectoras(); construirGraficoAnalitico();
     }
 
-    // 🛡️ TRADUCTOR MULTIVISTA INTEGRAL v5.9.5 (Soluciona las curvas de temperatura invisibles)
+    // 🛡️ MOTOR DE GRÁFICAS INTEGRAL CORREGIDO MÁXIMO v5.9.6 (Traducción síncrona en todas las vistas)
     function construirGraficoAnalitico() {
       const ctx = document.getElementById('canvas-chart-js').getContext('2d'); if (miGraficoChartJS) miGraficoChartJS.destroy();
       const unidadMedida = SIMBOLOS_UNIDADES[variableActiva] || ""; const configuracionColor = COLORES_VARIABLES[variableActiva];
@@ -489,7 +476,7 @@
             sensoresSeleccionados.forEach(id => {
               if (!acumuladorPorDia[d][id]) acumuladorPorDia[d][id] = [];
               
-              // 🛡️ UNIFICACIÓN FIJA DE VARIABLES AGREGADAS (MES)
+              // 🛡️ SINCRO DE VARIABLES FIJA PARA MES
               let val = null;
               if (variableActiva === 'bateria') val = nodo[id].battery;
               else if (variableActiva === 'humedad') val = nodo[id].moisture !== undefined ? nodo[id].moisture : nodo[id].hum;
@@ -531,7 +518,7 @@
             sensoresSeleccionados.forEach(id => {
               if (!acumuladorPorMes[xPos][id]) acumuladorPorMes[xPos][id] = [];
               
-              // 🛡️ UNIFICACIÓN FIJA DE VARIABLES AGREGADAS (AÑO)
+              // 🛡️ SINCRO DE VARIABLES FIJA PARA AÑO
               let val = null;
               if (variableActiva === 'bateria') val = nodo[id].battery;
               else if (variableActiva === 'humedad') val = nodo[id].moisture !== undefined ? nodo[id].moisture : nodo[id].hum;
@@ -590,7 +577,7 @@
         };
       });
 
-      let finalMinY = 0; 
+      let finalMinY = 0; // 🛡️ ORIGEN EN 0 FIJO SOLICITADO
       let finalMaxY = (variableActiva === 'humedad' || variableActiva === 'bateria') ? 100 : rango.max;
 
       if (totalPuntosEnCanvas.length > 0 && variableActiva !== 'humedad' && variableActiva !== 'bateria') {
@@ -676,12 +663,13 @@
     function cargarFotoEnTarjetaHome(idSensor) { const card = document.getElementById(`card-${idSensor}`); const overlay = document.getElementById(`overlay-${idSensor}`); const fotoGuardada = localStorage.getItem(`foto_${idSensor}`); if (card && fotoGuardada) { card.style.backgroundImage = `url('${fotoGuardada}')`; if (overlay) overlay.style.opacity = "0.85"; } else if (card) { card.style.backgroundImage = 'none'; if (overlay) overlay.style.opacity = "0"; } }
     function establecerFotoPantalla(base64Str) { document.getElementById('plant-image-bg').style.backgroundImage = `url('${base64Str}')`; document.getElementById('plant-image-placeholder').classList.add('view-hidden'); }
 
+    // 🛡️ REPARACIÓN ABSOLUTA DEL ACCORDION DE CLIMA
     window.addEventListener('DOMContentLoaded', () => {
       cargarDatosMeteo();
       document.getElementById('clima-header').addEventListener('click', () => {
         const acc = document.getElementById('clima-accordion'); const arrow = document.getElementById('clima-arrow');
         if (acc.classList.contains('open')) { acc.classList.remove('open'); arrow.classList.remove('rotate-180'); } 
-        else { acc.classList.add('open'); arrow.mathbf('rotate-180'); }
+        else { acc.classList.add('open'); arrow.classList.add('rotate-180'); }
       });
     });
   </script>
