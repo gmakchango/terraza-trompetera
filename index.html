@@ -1,664 +1,619 @@
+<!DOCTYPE html> 
+<html lang="es"> 
+<head> 
+  <meta charset="UTF-8"> 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+  <title>Terraza Tromptera - Dashboard IoT</title> 
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script> 
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> 
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> 
+  <style> 
+    .accordion-content { transition: max-height 0.3s ease-out, opacity 0.2s ease-out; max-height: 0; opacity: 0; overflow: hidden; } 
+    .accordion-content.open { max-height: 500px; opacity: 1; } 
+    .view-hidden { display: none !important; } 
+    body { transition: background-color 0.3s ease, color 0.3s ease; } 
+    section, article, div, button { transition: background-color 0.2s ease, border-color 0.2s ease; } 
+  </style> 
+</head> 
+<body id="master-body" class="bg-slate-900 text-slate-100 font-sans min-h-screen antialiased"> 
 
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Terraza Tromptera - Dashboard IoT</title>
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    .accordion-content { transition: max-height 0.3s ease-out, opacity 0.2s ease-out; max-height: 0; opacity: 0; overflow: hidden; }
-    .accordion-content.open { max-height: 500px; opacity: 1; }
-    .view-hidden { display: none !important; }
-    body { transition: background-color 0.3s ease, color 0.3s ease; }
-    section, article, div, button { transition: background-color 0.2s ease, border-color 0.2s ease; }
-  </style>
-</head>
-<body id="master-body" class="bg-slate-900 text-slate-100 font-sans min-h-screen antialiased">
+  <div id="loading-screen" class="fixed inset-0 bg-slate-900 z-50 flex flex-col justify-center items-center gap-4 transition-opacity duration-500 bg-cover bg-center"> 
+    <div id="loading-filter" class="absolute inset-0 bg-slate-900/80 z-0"></div> 
+    <div class="relative z-10 flex flex-col items-center gap-4"> 
+      <div class="h-12 w-12 rounded-full border-4 border-emerald-500/20 border-t-emerald-400 animate-spin"></div> 
+      <p class="text-xs font-mono text-slate-400 tracking-widest animate-pulse uppercase">CONECTANDO WITH METEO_CLOUD...</p> 
+    </div> 
+  </div> 
 
-  <div id="loading-screen" class="fixed inset-0 bg-slate-900 z-50 flex flex-col justify-center items-center gap-4 transition-opacity duration-500 bg-cover bg-center">
-    <div id="loading-filter" class="absolute inset-0 bg-slate-900/80 z-0"></div>
-    <div class="relative z-10 flex flex-col items-center gap-4">
-      <div class="h-12 w-12 rounded-full border-4 border-emerald-500/20 border-t-emerald-400 animate-spin"></div>
-      <p class="text-xs font-mono text-slate-400 tracking-widest animate-pulse uppercase">CONECTANDO WITH METEO_CLOUD...</p>
-    </div>
-  </div>
+  <input type="file" id="image-picker" accept="image/*" class="hidden"> 
+  <input type="file" id="bg-picker-global" accept="image/*" class="hidden"> 
 
-  <input type="file" id="image-picker" accept="image/*" class="hidden">
-  <input type="file" id="bg-picker-global" accept="image/*" class="hidden">
+  <div id="view-home" class="max-w-md mx-auto p-4 pb-24"> 
+    <header class="flex justify-between items-center mb-6 pt-2"> 
+      <div class="flex items-center gap-2"> 
+        <button onclick="dispararCargaImagenCarga()" class="h-7 w-7 bg-slate-800 text-slate-400 rounded-lg flex items-center justify-center border border-slate-700/50 text-xs shadow-sm"><i class="fa-solid fa-plus"></i></button> 
+        <div> 
+          <h1 class="text-xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-200 uppercase">TERRAZA TROMPETERA</h1> 
+          <p class="text-xs text-slate-400 font-mono">v5.12.5 MVP Verified</p> 
+        </div> 
+      </div> 
+      <span class="px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-sm font-mono">GITHUB LIVE</span> 
+    </header> 
 
-  <div id="view-home" class="max-w-md mx-auto p-4 pb-24">
-    <header class="flex justify-between items-center mb-6 pt-2">
-      <div class="flex items-center gap-2">
-        <button onclick="dispararCargaImagenCarga()" class="h-7 w-7 bg-slate-800 text-slate-400 rounded-lg flex items-center justify-center border border-slate-700/50 text-xs shadow-sm"><i class="fa-solid fa-plus"></i></button>
-        <div>
-          <h1 class="text-xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-200 uppercase">TERRAZA TROMPETERA</h1>
-          <p class="text-xs text-slate-400 font-mono">v5.9.4 Analytics Certified</p>
-        </div>
-      </div>
-      <span class="px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-sm font-mono">GITHUB LIVE</span>
-    </header>
+    <section class="bg-gradient-to-br from-slate-800 to-slate-750 rounded-2xl border border-slate-700/50 shadow-xl overflow-hidden mb-6 card-ui"> 
+      <div id="clima-header" class="p-5 flex justify-between items-center cursor-pointer select-none"> 
+        <div class="flex items-center gap-4"> 
+          <div class="p-3 bg-emerald-500/10 text-emerald-400 rounded-xl"><i class="fa-solid fa-cloud-sun text-2xl"></i></div> 
+          <div> 
+            <h2 class="text-sm font-bold text-slate-300 uppercase tracking-wider title-ui">Clima Ambiente</h2> 
+            <p id="lbl-uci-sub" class="text-xs text-slate-400 standard-sub">Ficha Técnica en Vivo</p> 
+          </div> 
+        </div> 
+        <div class="flex items-center gap-4"> 
+          <div class="text-right"> 
+            <span class="text-2xl font-black text-white block temp-ui" id="avg-temp">--°</span> 
+            <span class="text-xs text-slate-400 font-medium sub-ui"><i class="fa-solid fa-droplet text-cyan-400 mr-1"></i><span id="avg-hum">--</span>% HR</span> 
+          </div> 
+          <i id="clima-arrow" class="fa-solid fa-chevron-down text-slate-500 transition-transform duration-300 text-sm"></i> 
+        </div> 
+      </div> 
+      <div id="clima-accordion" class="accordion-content bg-slate-900/40 border-t border-slate-700/30"> 
+        <div class="p-4 space-y-2.5"> 
+          <div onclick="abrirDetalleClima('uci', 'UCI')" class="flex justify-between items-center bg-slate-800/60 p-3 rounded-xl border border-slate-700/40 cursor-pointer inner-card-ui"> 
+            <span class="text-xs font-bold tracking-wide text-slate-300 uppercase title-ui">UCI</span> 
+            <div class="flex gap-4 text-xs font-mono font-bold text-white data-ui"><span id="uci-temp">--°C</span><span id="uci-hum" class="text-slate-400 sub-ui">--%</span></div> 
+          </div> 
+          <div onclick="abrirDetalleClima('secadero', 'SECADERO')" class="flex justify-between items-center bg-slate-800/60 p-3 rounded-xl border border-slate-700/40 cursor-pointer inner-card-ui"> 
+            <span class="text-xs font-bold tracking-wide text-slate-300 uppercase title-ui">SECADERO</span> 
+            <div class="flex gap-4 text-xs font-mono font-bold text-white data-ui"><span id="secadero-temp">--°C</span><span id="secadero-hum" class="text-slate-400 sub-ui">--%</span></div> 
+          </div> 
+          <div onclick="abrirDetalleClima('fontana', 'FONTANA')" class="flex justify-between items-center bg-slate-800/60 p-3 rounded-xl border border-slate-700/40 cursor-pointer inner-card-ui"> 
+            <span class="text-xs font-bold tracking-wide text-slate-300 uppercase title-ui">FONTANA</span> 
+            <div class="flex gap-4 text-xs font-mono font-bold text-white data-ui"><span id="fontana-temp">--°C</span><span id="fontana-hum" class="text-slate-400 sub-ui">--%</span></div> 
+          </div> 
+        </div> 
+      </div> 
+    </section> 
 
-    <section class="bg-gradient-to-br from-slate-800 to-slate-750 rounded-2xl border border-slate-700/50 shadow-xl overflow-hidden mb-6 card-ui">
-      <div id="clima-header" class="p-5 flex justify-between items-center cursor-pointer select-none">
-        <div class="flex items-center gap-4">
-          <div class="p-3 bg-emerald-500/10 text-emerald-400 rounded-xl"><i class="fa-solid fa-cloud-sun text-2xl"></i></div>
-          <div>
-            <h2 class="text-sm font-bold text-slate-300 uppercase tracking-wider title-ui">Clima Ambiente</h2>
-            <p id="lbl-uci-sub" class="text-xs text-slate-400 standard-sub">Ficha Técnica en Vivo</p>
-          </div>
-        </div>
-        <div class="flex items-center gap-4">
-          <div class="text-right">
-            <span class="text-2xl font-black text-white block temp-ui" id="avg-temp">--°</span>
-            <span class="text-xs text-slate-400 font-medium sub-ui"><i class="fa-solid fa-droplet text-cyan-400 mr-1"></i><span id="avg-hum">--</span>% HR</span>
-          </div>
-          <i id="clima-arrow" class="fa-solid fa-chevron-down text-slate-500 transition-transform duration-300 text-sm"></i>
-        </div>
-      </div>
-      <div id="clima-accordion" class="accordion-content bg-slate-900/40 border-t border-slate-700/30">
-        <div class="p-4 space-y-2.5">
-          <div onclick="abrirDetalleClima('uci', 'UCI')" class="flex justify-between items-center bg-slate-800/60 p-3 rounded-xl border border-slate-700/40 cursor-pointer inner-card-ui">
-            <span class="text-xs font-bold tracking-wide text-slate-300 uppercase title-ui">UCI</span>
-            <div class="flex gap-4 text-xs font-mono font-bold text-white data-ui"><span id="uci-temp">--°C</span><span id="uci-hum" class="text-slate-400 sub-ui">--%</span></div>
-          </div>
-          <div onclick="abrirDetalleClima('secadero', 'SECADERO')" class="flex justify-between items-center bg-slate-800/60 p-3 rounded-xl border border-slate-700/40 cursor-pointer inner-card-ui">
-            <span class="text-xs font-bold tracking-wide text-slate-300 uppercase title-ui">SECADERO</span>
-            <div class="flex gap-4 text-xs font-mono font-bold text-white data-ui"><span id="secadero-temp">--°C</span><span id="secadero-hum" class="text-slate-400 sub-ui">--%</span></div>
-          </div>
-          <div onclick="abrirDetalleClima('fontana', 'FONTANA')" class="flex justify-between items-center bg-slate-800/60 p-3 rounded-xl border border-slate-700/40 cursor-pointer inner-card-ui">
-            <span class="text-xs font-bold tracking-wide text-slate-300 uppercase title-ui">FONTANA</span>
-            <div class="flex gap-4 text-xs font-mono font-bold text-white data-ui"><span id="fontana-temp">--°C</span><span id="fontana-hum" class="text-slate-400 sub-ui">--%</span></div>
-          </div>
-        </div>
-      </div>
+    <div class="mb-4"><h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest px-1 mb-3 tag-lbl">Macetas y Sustrato</h3></div> 
+    <section class="space-y-4"> 
+      <article onclick="abrirDetalle('al_jazz', 'AL JAZZ', 'bg-emerald-500')" id="card-al_jazz" class="relative bg-slate-800 border border-slate-700/60 rounded-2xl p-4 shadow-md overflow-hidden bg-cover bg-center card-ui"> 
+        <div class="absolute inset-0 bg-slate-900/80 z-0 card-overlay" id="overlay-al_jazz"></div> 
+        <div class="relative z-10"> 
+          <div class="flex justify-between items-center mb-1"> 
+            <h4 class="text-base font-bold text-white tracking-tight flex items-center gap-2 title-ui">AL JAZZ</h4> 
+            <span class="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/10 batt-ui"><span id="al_jazz-battery">--</span>%</span> 
+          </div> 
+          <p id="lbl-al_jazz-sub" class="text-[11px] text-slate-400 font-medium mb-3 sub-ui italic standard-sub">Ficha Técnica en Vivo</p> 
+          <div class="grid grid-cols-2 gap-3"> 
+            <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Hum. Suelo</span><span class="text-lg font-black text-white font-mono" id="al_jazz-moisture">--%</span></div> 
+            <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Temp. Suelo</span><span class="text-lg font-black text-white font-mono" id="al_jazz-temp">--°C</span></div> 
+            <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Luz</span><span class="text-lg font-black text-white font-mono" id="al_jazz-lux">--</span></div> 
+            <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Fertilidad</span><span class="text-lg font-black text-white font-mono" id="al_jazz-fertility">--</span></div> 
+          </div> 
+        </div> 
+      </article> 
+
+      <article onclick="abrirDetalle('genin', 'GENÍN', 'bg-teal-500')" id="card-genin" class="relative bg-slate-800 border border-slate-700/60 rounded-2xl p-4 shadow-md overflow-hidden bg-cover bg-center card-ui"> 
+        <div class="absolute inset-0 bg-slate-900/80 z-0 card-overlay" id="overlay-genin"></div> 
+        <div class="relative z-10"> 
+          <div class="flex justify-between items-center mb-1"> 
+            <h4 class="text-base font-bold text-white tracking-tight flex items-center gap-2 title-ui">GENÍN</h4> 
+            <span class="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/10 batt-ui"><span id="genin-battery">--</span>%</span> 
+          </div> 
+          <p id="lbl-genin-sub" class="text-[11px] text-slate-400 font-medium mb-3 sub-ui italic standard-sub">Ficha Técnica en Vivo</p> 
+          <div class="grid grid-cols-2 gap-3"> 
+            <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Hum. Suelo</span><span class="text-lg font-black text-white font-mono" id="genin-moisture">--%</span></div> 
+            <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Temp. Suelo</span><span class="text-lg font-black text-white font-mono" id="genin-temp">--°C</span></div> 
+            <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Luz</span><span class="text-lg font-black text-white font-mono" id="genin-lux">--</span></div> 
+            <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Fertilidad</span><span class="text-lg font-black text-white font-mono" id="genin-fertility">--</span></div> 
+          </div> 
+        </div> 
+      </article> 
+
+      <article onclick="abrirDetalle('plumbago', 'PLUMBAGO', 'bg-blue-500')" id="card-plumbago" class="relative bg-slate-800 border border-slate-700/60 rounded-2xl p-4 shadow-md overflow-hidden bg-cover bg-center card-ui"> 
+        <div class="absolute inset-0 bg-slate-900/80 z-0 card-overlay" id="overlay-plumbago"></div> 
+        <div class="relative z-10"> 
+          <div class="flex justify-between items-center mb-1"> 
+            <h4 class="text-base font-bold text-white tracking-tight flex items-center gap-2 title-ui">PLUMBAGO</h4> 
+            <span class="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/10 batt-ui"><span id="plumbago-battery">--</span>%</span> 
+          </div> 
+          <p id="lbl-plumbago-sub" class="text-[11px] text-slate-400 font-medium mb-3 sub-ui italic standard-sub">Ficha Técnica en Vivo</p> 
+          <div class="grid grid-cols-2 gap-3"> 
+            <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Hum. Suelo</span><span class="text-lg font-black text-white font-mono" id="plumbago-moisture">--%</span></div> 
+            <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Temp. Suelo</span><span class="text-lg font-black text-white font-mono" id="plumbago-temp">--°C</span></div> 
+            <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Luz</span><span class="text-lg font-black text-white font-mono" id="plumbago-lux">--</span></div> 
+            <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Fertilidad</span><span class="text-lg font-black text-white font-mono" id="plumbago-fertility">--</span></div> 
+          </div> 
+        </div> 
+      </article> 
+    </section> 
+
+    <div class="fixed bottom-4 left-0 right-0 flex justify-center z-40"> 
+      <button onclick="toggleVisualMode()" class="px-5 py-2.5 bg-slate-800 text-white rounded-full border border-slate-700 font-bold text-xs tracking-wider uppercase flex items-center gap-2 shadow-2xl transition-all hover:scale-105" id="btn-mode-toggle"> 
+        <i class="fa-solid fa-sun text-amber-400" id="icon-mode"></i> <span id="lbl-mode-btn">Light Mode</span> 
+      </button> 
+    </div> 
+  </div> 
+
+  <div id="view-detail" class="max-w-md mx-auto p-4 pb-24 view-hidden"> 
+    <header class="flex items-center gap-4 mb-6 pt-2"> 
+      <button onclick="volverAHome()" class="p-2.5 bg-slate-800 rounded-xl text-slate-400 back-btn"><i class="fa-solid fa-chevron-left text-sm"></i></button> 
+      <div> 
+        <h1 class="text-xl font-black tracking-tight text-white uppercase flex items-center gap-2 title-ui"><span id="detail-dot" class="h-2 w-2 rounded-full"></span> <span id="detail-title">PLANTA</span></h1> 
+        <input type="text" id="input-sub-libre" maxlength="180" class="text-xs text-slate-400 font-mono bg-transparent border-b border-transparent hover:border-slate-600 focus:border-emerald-500 focus:outline-none w-64 pt-0.5" onchange="salvarTextoFichaNube()"> 
+      </div> 
+    </header> 
+
+    <div id="plant-image-bg" class="hidden"></div>
+    <div id="plant-image-placeholder" class="hidden"></div>
+
+    <section class="grid grid-cols-2 gap-3 mb-6">
+      <div class="bg-slate-800 p-3 rounded-xl border border-slate-700/40 card-ui"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Humedad</span><span class="text-base font-black text-white font-mono" id="detail-moisture">--</span></div>
+      <div class="bg-slate-800 p-3 rounded-xl border border-slate-700/40 card-ui"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Temperatura</span><span class="text-base font-black text-white font-mono" id="detail-temp">--</span></div>
+      <div class="bg-slate-800 p-3 rounded-xl border border-slate-700/40 card-ui"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Luminosidad</span><span class="text-base font-black text-white font-mono" id="detail-lux">--</span></div>
+      <div class="bg-slate-800 p-3 rounded-xl border border-slate-700/40 card-ui"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Fertilidad</span><span class="text-base font-black text-white font-mono" id="detail-fertility">--</span></div>
     </section>
 
-    <div class="mb-4"><h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest px-1 mb-3 tag-lbl">Macetas y Sustrato</h3></div>
-    <section class="space-y-4">
-      <article onclick="abrirDetalle('al_jazz', 'AL JAZZ', 'bg-emerald-500')" id="card-al_jazz" class="relative bg-slate-800 border border-slate-700/60 rounded-2xl p-4 shadow-md overflow-hidden bg-cover bg-center card-ui">
-        <div class="absolute inset-0 bg-slate-900/80 z-0 card-overlay" id="overlay-al_jazz"></div>
-        <div class="relative z-10">
-          <div class="flex justify-between items-center mb-1">
-            <h4 class="text-base font-bold text-white tracking-tight flex items-center gap-2 title-ui">AL JAZZ</h4>
-            <span class="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/10 batt-ui"><span id="al_jazz-battery">--</span>%</span>
-          </div>
-          <p id="lbl-al_jazz-sub" class="text-[11px] text-slate-400 font-medium mb-3 sub-ui italic standard-sub">Ficha Técnica en Vivo</p>
-          <div class="grid grid-cols-2 gap-3">
-            <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Hum. Suelo</span><span class="text-lg font-black text-white font-mono" id="al_jazz-moisture">--%</span></div>
-            <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Temp. Suelo</span><span class="text-lg font-black text-white font-mono" id="al_jazz-temp">--°C</span></div>
-            <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Luz</span><span class="text-lg font-black text-white font-mono" id="al_jazz-lux">--</span></div>
-            <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Fertilidad</span><span class="text-lg font-black text-white font-mono" id="al_jazz-fertility">--</span></div>
-          </div>
-        </div>
-      </article>
+    <div class="grid grid-cols-1 gap-3"> 
+      <div class="bg-gradient-to-r from-slate-800 to-slate-750 rounded-2xl border border-slate-700/50 overflow-hidden card-ui"> 
+        <button onclick="toggleAcordeonMonitorizacion()" class="w-full text-white font-bold py-4 px-6 flex justify-between items-center select-none title-ui"> 
+          <span><i class="fa-solid fa-chart-line text-emerald-400 text-lg mr-2"></i>MONITORIZAÇÃO</span> 
+          <i id="monitor-arrow" class="fa-solid fa-chevron-down text-slate-400 transition-transform duration-300 text-sm"></i> 
+        </button> 
+        <div id="monitor-accordion" class="accordion-content bg-slate-900/40 border-t border-slate-700/30"> 
+          <div class="p-4 space-y-2.5"> 
+            <div onclick="abrirPantallaGrafica('temperatura')" class="flex justify-between items-center bg-slate-800/60 p-3 rounded-xl border border-slate-700/30 transition-all cursor-pointer inner-card-ui"><span class="text-xs font-bold text-slate-300 uppercase title-ui">Temperatura</span><i class="fa-solid fa-chevron-right text-slate-500 text-[10px]"></i></div> 
+            <div onclick="abrirPantallaGrafica('humedad')" class="flex justify-between items-center bg-slate-800/60 p-3 rounded-xl border border-slate-700/30 transition-all cursor-pointer inner-card-ui"><span class="text-xs font-bold text-slate-300 uppercase title-ui">Humedad</span><i class="fa-solid fa-chevron-right text-slate-500 text-[10px]"></i></div> 
+            <div onclick="abrirPantallaGrafica('fertilidad')" class="flex justify-between items-center bg-slate-800/60 p-3 rounded-xl border border-slate-700/30 transition-all cursor-pointer inner-card-ui"><span class="text-xs font-bold text-slate-300 uppercase title-ui">Fertilidad</span><i class="fa-solid fa-chevron-right text-slate-500 text-[10px]"></i></div> 
+            <div onclick="abrirPantallaGrafica('lux')" class="flex justify-between items-center bg-slate-800/60 p-3 rounded-xl border border-slate-700/30 transition-all cursor-pointer inner-card-ui"><span class="text-xs font-bold text-slate-300 uppercase title-ui">Luminosidad (LUX)</span><i class="fa-solid fa-chevron-right text-slate-500 text-[10px]"></i></div> 
+          </div> 
+        </div> 
+      </div> 
+      <button onclick="abrirPantallaGrafica('bateria')" class="w-full bg-gradient-to-r from-slate-800 to-slate-750 text-white font-bold py-4 px-6 rounded-2xl border border-slate-700/50 flex justify-between items-center shadow-md card-ui title-ui"> 
+        <span><i class="fa-solid fa-battery-three-quarters text-amber-400 text-lg mr-2"></i>SALUD BATERÍA (<span id="detail-battery-lbl">--</span>%)</span> 
+        <i class="fa-solid fa-arrow-right text-slate-500 text-xs"></i> 
+      </button> 
+    </div> 
+  </div> 
 
-      <article onclick="abrirDetalle('genin', 'GENÍN', 'bg-teal-500')" id="card-genin" class="relative bg-slate-800 border border-slate-700/60 rounded-2xl p-4 shadow-md overflow-hidden bg-cover bg-center card-ui">
-        <div class="absolute inset-0 bg-slate-900/80 z-0 card-overlay" id="overlay-genin"></div>
-        <div class="relative z-10">
-          <div class="flex justify-between items-center mb-1">
-            <h4 class="text-base font-bold text-white tracking-tight flex items-center gap-2 title-ui">GENÍN</h4>
-            <span class="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/10 batt-ui"><span id="genin-battery">--</span>%</span>
-          </div>
-          <p id="lbl-genin-sub" class="text-[11px] text-slate-400 font-medium mb-3 sub-ui italic standard-sub">Ficha Técnica en Vivo</p>
-          <div class="grid grid-cols-2 gap-3">
-            <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Hum. Suelo</span><span class="text-lg font-black text-white font-mono" id="genin-moisture">--%</span></div>
-            <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Temp. Suelo</span><span class="text-lg font-black text-white font-mono" id="genin-temp">--°C</span></div>
-            <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Luz</span><span class="text-lg font-black text-white font-mono" id="genin-lux">--</span></div>
-            <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Fertilidad</span><span class="text-lg font-black text-white font-mono" id="genin-fertility">--</span></div>
-          </div>
-        </div>
-      </article>
+  <div id="view-charts" class="max-w-md mx-auto p-4 pb-24 view-hidden"> 
+    <header class="flex items-center gap-4 mb-4 pt-2"> 
+      <button onclick="volverADetalle()" class="p-2.5 bg-slate-800 rounded-xl text-slate-400 back-btn"><i class="fa-solid fa-chevron-left text-sm"></i></button> 
+      <div> 
+        <h1 class="text-xl font-black text-white uppercase title-ui" id="chart-variable-title">VARIABLE</h1> 
+        <p class="text-xs text-slate-400 font-mono">Cursor Magnético de Punto Único</p> 
+      </div> 
+    </header> 
 
-      <article onclick="abrirDetalle('plumbago', 'PLUMBAGO', 'bg-blue-500')" id="card-plumbago" class="relative bg-slate-800 border border-slate-700/60 rounded-2xl p-4 shadow-md overflow-hidden bg-cover bg-center card-ui">
-        <div class="absolute inset-0 bg-slate-900/80 z-0 card-overlay" id="overlay-plumbago"></div>
-        <div class="relative z-10">
-          <div class="flex justify-between items-center mb-1">
-            <h4 class="text-base font-bold text-white tracking-tight flex items-center gap-2 title-ui">PLUMBAGO</h4>
-            <span class="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/10 batt-ui"><span id="plumbago-battery">--</span>%</span>
-          </div>
-          <p id="lbl-plumbago-sub" class="text-[11px] text-slate-400 font-medium mb-3 sub-ui italic standard-sub">Ficha Técnica en Vivo</p>
-          <div class="grid grid-cols-2 gap-3">
-            <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Hum. Suelo</span><span class="text-lg font-black text-white font-mono" id="plumbago-moisture">--%</span></div>
-            <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Temp. Suelo</span><span class="text-lg font-black text-white font-mono" id="plumbago-temp">--°C</span></div>
-            <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Luz</span><span class="text-lg font-black text-white font-mono" id="plumbago-lux">--</span></div>
-            <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Fertilidad</span><span class="text-lg font-black text-white font-mono" id="plumbago-fertility">--</span></div>
-          </div>
-        </div>
-      </article>
-    </section>
+    <div class="bg-slate-850 border border-slate-700/40 rounded-xl p-3 mb-4 flex justify-between items-center card-ui"> 
+      <span class="text-xs font-bold text-slate-400 uppercase tracking-wider tag-lbl">Lectura Temporal</span> 
+      <div class="text-right"> 
+        <span id="scrub-value" class="text-base font-black font-mono text-white block temp-ui">--</span> 
+        <span id="scrub-time" class="text-[10px] font-mono text-slate-400 sub-ui">Desliza el dedo por el lienzo</span> 
+      </div> 
+    </div> 
 
-    <div class="fixed bottom-4 left-0 right-0 flex justify-center z-40">
-      <button onclick="toggleVisualMode()" class="px-5 py-2.5 bg-slate-800 text-white rounded-full border border-slate-700 font-bold text-xs tracking-wider uppercase flex items-center gap-2 shadow-2xl transition-all hover:scale-105" id="btn-mode-toggle">
-        <i class="fa-solid fa-sun text-amber-400" id="icon-mode"></i> <span id="lbl-mode-btn">Light Mode</span>
-      </button>
-    </div>
-  </div>
+    <div class="mb-4"> 
+      <span class="text-[10px] uppercase font-bold text-slate-400 block mb-2 tracking-widest tag-lbl">Comparar Dispositivos</span> 
+      <div class="flex flex-wrap gap-1.5" id="sensor-pills-container"></div> 
+    </div> 
 
-  <div id="view-detail" class="max-w-md mx-auto p-4 pb-24 view-hidden">
-    <header class="flex items-center gap-4 mb-6 pt-2">
-      <button onclick="volverAHome()" class="p-2.5 bg-slate-800 rounded-xl text-slate-400 back-btn"><i class="fa-solid fa-chevron-left text-sm"></i></button>
-      <div>
-        <h1 class="text-xl font-black tracking-tight text-white uppercase flex items-center gap-2 title-ui"><span id="detail-dot" class="h-2 w-2 rounded-full"></span> <span id="detail-title">PLANTA</span></h1>
-        <input type="text" id="input-sub-libre" maxlength="180" class="text-xs text-slate-400 font-mono bg-transparent border-b border-transparent hover:border-slate-600 focus:border-emerald-500 focus:outline-none w-64 pt-0.5" onchange="salvarTextoFichaNube()">
-      </div>
-    </header>
+    <section class="bg-slate-850 border border-slate-700/50 rounded-3xl p-3 shadow-2xl mb-4 relative card-ui"> 
+      <canvas id="canvas-chart-js" class="w-full h-64"></canvas> 
+    </section> 
 
-    <section class="relative w-full aspect-square bg-slate-800 rounded-3xl overflow-hidden shadow-2xl mb-6 flex items-center justify-center card-ui">
-      <div id="plant-image-bg" class="absolute inset-0 bg-cover bg-center"></div>
-      <div id="plant-image-placeholder" class="absolute inset-0 flex flex-col justify-center items-center text-slate-500 bg-slate-800/40">
-        <i class="fa-solid fa-seedling text-6xl mb-2"></i>
-        <p class="text-xs font-medium tracking-wide">SIN FOTO ASIGNADA</p>
-      </div>
-      <button onclick="dispararCargaImagen()" class="absolute top-4 right-4 h-10 w-10 bg-slate-900/60 backdrop-blur-md rounded-full text-white text-lg flex items-center justify-center shadow-lg"><i class="fa-solid fa-plus"></i></button>
+    <div class="grid grid-cols-3 gap-2 bg-slate-850 p-1.5 rounded-xl border border-slate-700/40 card-ui"> 
+      <button onclick="cambiarFiltroTiempo('dia')" id="btn-time-dia" class="py-2 rounded-lg text-xs font-bold bg-slate-700 text-white uppercase tracking-wider">Día</button> 
+      <button onclick="cambiarFiltroTiempo('mes')" id="btn-time-mes" class="py-2 rounded-lg text-xs font-medium text-slate-400 uppercase tracking-wider">Mes</button> 
+      <button onclick="cambiarFiltroTiempo('ano')" id="btn-time-ano" class="py-2 rounded-lg text-xs font-medium text-slate-400 uppercase tracking-wider">Año</button> 
+    </div> 
+  </div> 
 
-      <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-slate-900 via-slate-900/70 to-transparent pt-12 z-10">
-        <div class="grid grid-cols-2 gap-2">
-          <div class="bg-white/5 backdrop-blur-md border border-white/10 p-3 rounded-2xl flex items-center gap-3 glass-box">
-            <i class="fa-solid fa-water text-cyan-400 text-lg"></i>
-            <div><span class="text-[10px] uppercase font-bold text-slate-300 block">Humedad</span><span class="text-base font-black text-white font-mono" id="detail-moisture">--%</span></div>
-          </div>
-          <div class="bg-white/5 backdrop-blur-md border border-white/10 p-3 rounded-2xl flex items-center gap-3 glass-box">
-            <i class="fa-solid fa-temperature-half text-orange-400 text-lg"></i>
-            <div><span class="text-[10px] uppercase font-bold text-slate-300 block">TEMPERATURA</span><span class="text-base font-black text-white font-mono" id="detail-temp">--°C</span></div>
-          </div>
-          <div class="bg-white/5 backdrop-blur-md border border-white/10 p-3 rounded-2xl flex items-center gap-3 glass-box">
-            <i class="fa-solid fa-sun text-amber-400 text-lg"></i>
-            <div><span class="text-[10px] uppercase font-bold text-slate-300 block">LUX</span><span class="text-base font-black text-white font-mono" id="detail-lux">--</span></div>
-          </div>
-          <div class="bg-white/5 backdrop-blur-md border border-white/10 p-3 rounded-2xl flex items-center gap-3 glass-box">
-            <i class="fa-solid fa-seedling text-emerald-400 text-lg"></i>
-            <div><span class="text-[10px] uppercase font-bold text-slate-300 block">Fertilidad</span><span class="text-base font-black text-white font-mono" id="detail-fertility">--</span></div>
-          </div>
-        </div>
-      </div>
-    </section>
+  <script> 
+    const API_URL = "https://script.google.com/macros/s/AKfycbyi6HCYPtqU1sCDY4UTZIkVKSmE4PaQciTVSlPjUY7yp21EgD-4cipP-_6tJxK8L88iiA/exec"; 
+    let baseDatosCache = null; let idSensorActivo = null; let variableActiva = null; let miGraficoChartJS = null; 
+    let sensoresSeleccionados = []; let contextoOrigenEsClima = false; let filtroTiempoActivo = 'dia';  
+    let plantaEnFocoParaUmbrales = null; let diccionarioRangosSheet2 = null; let visualLightMode = false; 
 
-    <div class="grid grid-cols-1 gap-3">
-      <div class="bg-gradient-to-r from-slate-800 to-slate-750 rounded-2xl border border-slate-700/50 overflow-hidden card-ui">
-        <button onclick="toggleAcordeonMonitorizacion()" class="w-full text-white font-bold py-4 px-6 flex justify-between items-center select-none title-ui">
-          <span><i class="fa-solid fa-chart-line text-emerald-400 text-lg mr-2"></i>MONITORIZAÇÃO</span>
-          <i id="monitor-arrow" class="fa-solid fa-chevron-down text-slate-400 transition-transform duration-300 text-sm"></i>
-        </button>
-        <div id="monitor-accordion" class="accordion-content bg-slate-900/40 border-t border-slate-700/30">
-          <div class="p-4 space-y-2.5">
-            <div onclick="abrirPantallaGrafica('temperatura')" class="flex justify-between items-center bg-slate-800/60 p-3 rounded-xl border border-slate-700/30 transition-all cursor-pointer inner-card-ui"><span class="text-xs font-bold text-slate-300 uppercase title-ui">Temperatura</span><i class="fa-solid fa-chevron-right text-slate-500 text-[10px]"></i></div>
-            <div onclick="abrirPantallaGrafica('humedad')" class="flex justify-between items-center bg-slate-800/60 p-3 rounded-xl border border-slate-700/30 transition-all cursor-pointer inner-card-ui"><span class="text-xs font-bold text-slate-300 uppercase title-ui">Humedad</span><i class="fa-solid fa-chevron-right text-slate-500 text-[10px]"></i></div>
-            <div onclick="abrirPantallaGrafica('fertilidad')" class="flex justify-between items-center bg-slate-800/60 p-3 rounded-xl border border-slate-700/30 transition-all cursor-pointer inner-card-ui"><span class="text-xs font-bold text-slate-300 uppercase title-ui">Fertilidad</span><i class="fa-solid fa-chevron-right text-slate-500 text-[10px]"></i></div>
-            <div onclick="abrirPantallaGrafica('lux')" class="flex justify-between items-center bg-slate-800/60 p-3 rounded-xl border border-slate-700/30 transition-all cursor-pointer inner-card-ui"><span class="text-xs font-bold text-slate-300 uppercase title-ui">Luminosidad (LUX)</span><i class="fa-solid fa-chevron-right text-slate-500 text-[10px]"></i></div>
-          </div>
-        </div>
-      </div>
-      <button onclick="abrirPantallaGrafica('bateria')" class="w-full bg-gradient-to-r from-slate-800 to-slate-750 text-white font-bold py-4 px-6 rounded-2xl border border-slate-700/50 flex justify-between items-center shadow-md card-ui title-ui">
-        <span><i class="fa-solid fa-battery-three-quarters text-amber-400 text-lg mr-2"></i>SALUD BATERÍA (<span id="detail-battery-lbl">--</span>%)</span>
-        <i class="fa-solid fa-arrow-right text-slate-500 text-xs"></i>
-      </button>
-    </div>
-  </div>
+    const SIMBOLOS_UNIDADES = { temperatura: "ºC", humedad: "%", fertilidad: " µS", lux: " Lux", bateria: "%" }; 
+    const COLORES_VARIABLES = { temperatura: { linea: "#ef4444" }, humedad: { linea: "#3b82f6" }, fertilidad: { linea: "#10b981" }, lux: { linea: "#eab308" }, bateria: { linea: "#f59e0b" } }; 
 
-  <div id="view-charts" class="max-w-md mx-auto p-4 pb-24 view-hidden">
-    <header class="flex items-center gap-4 mb-4 pt-2">
-      <button onclick="volverADetalle()" class="p-2.5 bg-slate-800 rounded-xl text-slate-400 back-btn"><i class="fa-solid fa-chevron-left text-sm"></i></button>
-      <div>
-        <h1 class="text-xl font-black text-white uppercase title-ui" id="chart-variable-title">VARIABLE</h1>
-        <p class="text-xs text-slate-400 font-mono">Cursor Magnético de Punto Único</p>
-      </div>
-    </header>
+    const RANGOS_AGRICOLAS = { 
+      al_jazz: { temperatura: { min: 18, max: 32 }, humedad: { min: 20, max: 45 }, fertilidad: { min: 250, max: 600 }, lux: { min: 800, max: 5000 } }, 
+      genin: { temperatura: { min: 16, max: 30 }, humedad: { min: 18, max: 40 }, fertilidad: { min: 220, max: 550 }, lux: { min: 600, max: 4500 } }, 
+      plumbago: { temperatura: { min: 10, max: 35 }, humedad: { min: 40, max: 75 }, fertilidad: { min: 300, max: 700 }, lux: { min: 8000, max: 30000 } }, 
+      uci: { temperatura: { min: 15, max: 35 }, humedad: { min: 20, max: 70 } }, 
+      secadero: { temperatura: { min: 14, max: 28 }, humedad: { min: 15, max: 60 } }, 
+      fontana: { temperatura: { min: 16, max: 33 }, humedad: { min: 25, max: 75 } } 
+    }; 
 
-    <div class="bg-slate-850 border border-slate-700/40 rounded-xl p-3 mb-4 flex justify-between items-center card-ui">
-      <span class="text-xs font-bold text-slate-400 uppercase tracking-wider tag-lbl">Lectura Temporal</span>
-      <div class="text-right">
-        <span id="scrub-value" class="text-base font-black font-mono text-white block temp-ui">--</span>
-        <span id="scrub-time" class="text-[10px] font-mono text-slate-400 sub-ui">Desliza el dedo por el lienzo</span>
-      </div>
-    </div>
+    function forzarApagadoSpinner() { 
+      const loader = document.getElementById('loading-screen'); 
+      if (loader) { loader.classList.add('opacity-0'); setTimeout(() => loader.remove(), 500); } 
+    } 
 
-    <div class="mb-4">
-      <span class="text-[10px] uppercase font-bold text-slate-400 block mb-2 tracking-widest tag-lbl">Comparar Dispositivos</span>
-      <div class="flex flex-wrap gap-1.5" id="sensor-pills-container"></div>
-    </div>
+    async function cargarDatosMeteo() { 
+      try { 
+        const respuesta = await fetch(`${API_URL}?_cb=${new Date().getTime()}`); 
+        baseDatosCache = await respuesta.json(); 
+        if (!baseDatosCache.success) throw new Error("API Data Error"); 
+        diccionarioRangosSheet2 = baseDatosCache.rangosSheet2; 
 
-    <section class="bg-slate-850 border border-slate-700/50 rounded-3xl p-3 shadow-2xl mb-4 relative card-ui">
-      <canvas id="canvas-chart-js" class="w-full h-64"></canvas>
-    </section>
+        if (baseDatosCache.appConfig) { 
+          ['al_jazz', 'genin', 'plumbago', 'uci', 'secadero', 'fontana'].forEach(k => { 
+            let txt = baseDatosCache.appConfig[`txt_${k}`] || "Ficha Técnica en Vivo"; 
+            let el = document.getElementById(`lbl-${k}-sub`); if (el) el.innerText = txt; 
+          }); 
+          let imgCargaBase64 = baseDatosCache.appConfig.img_loading; 
+          if(imgCargaBase64) { 
+            document.getElementById('loading-screen').style.backgroundImage = `url('${imgCargaBase64}')`; 
+            document.getElementById('loading-filter').style.backgroundColor = "rgba(15, 23, 42, 0.65)"; 
+          } 
+        } 
 
-    <div class="grid grid-cols-3 gap-2 bg-slate-850 p-1.5 rounded-xl border border-slate-700/40 card-ui">
-      <button onclick="cambiarFiltroTiempo('dia')" id="btn-time-dia" class="py-2 rounded-lg text-xs font-bold bg-slate-700 text-white uppercase tracking-wider">Día</button>
-      <button onclick="cambiarFiltroTiempo('mes')" id="btn-time-mes" class="py-2 rounded-lg text-xs font-medium text-slate-400 uppercase tracking-wider">Mes</button>
-      <button onclick="cambiarFiltroTiempo('ano')" id="btn-time-ano" class="py-2 rounded-lg text-xs font-medium text-slate-400 uppercase tracking-wider">Año</button>
-    </div>
-  </div>
+        document.getElementById('avg-temp').innerText = baseDatosCache.clima.avg_temp + "°"; 
+        document.getElementById('avg-hum').innerText = baseDatosCache.clima.avg_hum; 
+        document.getElementById('uci-temp').innerText = baseDatosCache.clima.uci_temp + "°C"; 
+        document.getElementById('uci-hum').innerText = baseDatosCache.clima.uci_hum + "%"; 
+        document.getElementById('secadero-temp').innerText = baseDatosCache.clima.secadero_temp + "°C"; 
+        document.getElementById('secadero-hum').innerText = baseDatosCache.clima.secadero_hum + "%"; 
+        document.getElementById('fontana-temp').innerText = baseDatosCache.clima.fontana_temp + "°C"; 
+        document.getElementById('fontana-hum').innerText = baseDatosCache.clima.fontana_hum + "%"; 
 
-  <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbyi6HCYPtqU1sCDY4UTZIkVKSmE4PaQciTVSlPjUY7yp21EgD-4cipP-_6tJxK8L88iiA/exec";
-    let baseDatosCache = null; let idSensorActivo = null; let variableActiva = null; let miGraficoChartJS = null;
-    let sensoresSeleccionados = []; let contextoOrigenEsClima = false; let filtroTiempoActivo = 'dia'; 
-    let plantaEnFocoParaUmbrales = null; let diccionarioRangosSheet2 = null; let visualLightMode = false;
+        ['al_jazz', 'genin', 'plumbago'].forEach(id => { 
+          document.getElementById(`${id}-battery`).innerText = baseDatosCache[id].battery; 
+          document.getElementById(`${id}-moisture`).innerText = baseDatosCache[id].moisture + "%"; 
+          document.getElementById(`${id}-temp`).innerText = baseDatosCache[id].temp + "°C"; 
+          document.getElementById(`${id}-lux`).innerText = baseDatosCache[id].lux.toLocaleString('es-ES') + " Lux"; 
+          document.getElementById(`${id}-fertility`).innerHTML = baseDatosCache[id].fertility + ' <span class="text-[10px] font-normal opacity-60">µS</span>'; 
+          cargarFotoEnTarjetaHome(id); 
+        }); 
 
-    const SIMBOLOS_UNIDADES = { temperatura: "ºC", humedad: "%", fertilidad: " µS", lux: " Lux", bateria: "%" };
-    const COLORES_VARIABLES = { temperatura: { linea: "#ef4444" }, humedad: { linea: "#3b82f6" }, fertilidad: { linea: "#10b981" }, lux: { linea: "#eab308" }, bateria: { linea: "#f59e0b" } };
+        forzarApagadoSpinner(); 
+        if (idSensorActivo) actualizarValoresPantallaDetalle(); 
+      } catch (error) {  
+        console.error(error); 
+        forzarApagadoSpinner(); 
+      } 
+    } 
 
-    const RANGOS_AGRICOLAS = {
-      al_jazz: { temperatura: { min: 18, max: 32 }, humedad: { min: 20, max: 45 }, fertilidad: { min: 250, max: 600 }, lux: { min: 800, max: 5000 } },
-      genin: { temperatura: { min: 16, max: 30 }, humedad: { min: 18, max: 40 }, fertilidad: { min: 220, max: 550 }, lux: { min: 600, max: 4500 } },
-      plumbago: { temperatura: { min: 10, max: 35 }, humedad: { min: 40, max: 75 }, fertilidad: { min: 300, max: 700 }, lux: { min: 8000, max: 30000 } },
-      uci: { temperatura: { min: 15, max: 35 }, humedad: { min: 20, max: 70 } },
-      secadero: { temperatura: { min: 14, max: 28 }, humedad: { min: 15, max: 60 } },
-      fontana: { temperatura: { min: 16, max: 33 }, humedad: { min: 25, max: 75 } }
-    };
+    function abrirDetalle(idSensor, nombreVisible, colorClase) { contextoOrigenEsClima = false; idSensorActivo = idSensor; ejecutarTransicionDetalle(nombreVisible, colorClase); } 
+    function abrirDetalleClima(idSensor, nombreVisible) { contextoOrigenEsClima = true; idSensorActivo = idSensor; ejecutarTransicionDetalle(nombreVisible, "bg-amber-500"); } 
 
-    function forzarApagadoSpinner() {
-      const loader = document.getElementById('loading-screen');
-      if (loader) { loader.classList.add('opacity-0'); setTimeout(() => loader.remove(), 500); }
-    }
+    function ejecutarTransicionDetalle(nombreVisible, colorClase) { 
+      document.getElementById('detail-title').innerText = nombreVisible; 
+      const dot = document.getElementById('detail-dot'); if(dot) dot.className = `h-2 w-2 rounded-full ${colorClase}`; 
+      let fallbackTexto = baseDatosCache && baseDatosCache.appConfig ? (baseDatosCache.appConfig[`txt_${idSensorActivo}`] || "Ficha Técnica en Vivo") : "Ficha Técnica en Vivo"; 
+      document.getElementById('input-sub-libre').value = fallbackTexto; 
+      actualizarValoresPantallaDetalle(); cargarFotoDeMemoria(idSensorActivo); 
+      document.getElementById('view-home').classList.add('view-hidden');  
+      document.getElementById('view-detail').classList.remove('view-hidden'); 
+      window.scrollTo(0, 0); 
+    } 
 
-    // Guard de seguridad preventivo
-    setTimeout(() => { forzarApagadoSpinner(); }, 1600);
+    function actualizarValoresPantallaDetalle() { 
+      if (!baseDatosCache || !idSensorActivo) return; 
+      const esClima = ['uci', 'secadero', 'fontana'].includes(idSensorActivo); 
+      if (esClima) { 
+        document.getElementById('detail-moisture').innerText = baseDatosCache.clima[`${idSensorActivo}_hum`] + "%"; 
+        document.getElementById('detail-temp').innerText = baseDatosCache.clima[`${idSensorActivo}_temp`] + "°C"; 
+        document.getElementById('detail-lux').innerText = "-- Lux"; document.getElementById('detail-fertility').innerHTML = "--"; 
+        document.getElementById('detail-battery-lbl').innerText = "99"; 
+      } else { 
+        const sensor = baseDatosCache[idSensorActivo]; 
+        document.getElementById('detail-moisture').innerText = sensor.moisture + "%"; 
+        document.getElementById('detail-temp').innerText = sensor.temp + "°C"; 
+        document.getElementById('detail-lux').innerText = sensor.lux.toLocaleString('es-ES') + " Lux"; 
+        document.getElementById('detail-fertility').innerHTML = sensor.fertility + ' <span class="text-[10px] font-normal opacity-60">µS</span>'; 
+        document.getElementById('detail-battery-lbl').innerText = sensor.battery; 
+      } 
+    } 
 
-    async function cargarDatosMeteo() {
-      try {
-        const respuesta = await fetch(`${API_URL}?_cb=${new Date().getTime()}`);
-        baseDatosCache = await respuesta.json();
-        if (!baseDatosCache.success) throw new Error("API Data Error");
-        diccionarioRangosSheet2 = baseDatosCache.rangosSheet2;
+    async function salvarTextoFichaNube() { 
+      const txt = document.getElementById('input-sub-libre').value; 
+      if(baseDatosCache && baseDatosCache.appConfig) baseDatosCache.appConfig[`txt_${idSensorActivo}`] = txt; 
+      let elHome = document.getElementById(`lbl-${idSensorActivo}-sub`); if (elHome) elHome.innerText = txt; 
+      fetch(API_URL, { method: "POST", body: JSON.stringify({ clave: `txt_${idSensorActivo}`, valor: txt }) }).catch(e => console.error(e)); 
+    } 
 
-        if (baseDatosCache.appConfig) {
-          ['al_jazz', 'genin', 'plumbago', 'uci', 'secadero', 'fontana'].forEach(k => {
-            let txt = baseDatosCache.appConfig[`txt_${k}`] || "Ficha Técnica en Vivo";
-            let el = document.getElementById(`lbl-${k}-sub`); if (el) el.innerText = txt;
-          });
-          let imgCargaBase64 = baseDatosCache.appConfig.img_loading;
-          if(imgCargaBase64) {
-            document.getElementById('loading-screen').style.backgroundImage = `url('${imgCargaBase64}')`;
-            document.getElementById('loading-filter').style.backgroundColor = "rgba(15, 23, 42, 0.65)";
-          }
-        }
+    function abrirPantallaGrafica(variable) { 
+      variableActiva = variable; filtroTiempoActivo = 'dia'; sensoresSeleccionados = [idSensorActivo]; plantaEnFocoParaUmbrales = idSensorActivo;  
+      document.getElementById('chart-variable-title').innerText = variable.toUpperCase(); 
+      document.getElementById('view-detail').classList.add('view-hidden');  
+      document.getElementById('view-charts').classList.remove('view-hidden'); 
+      cambiarFiltroTiempo('dia'); 
+    } 
 
-        document.getElementById('avg-temp').innerText = baseDatosCache.clima.avg_temp + "°";
-        document.getElementById('avg-hum').innerText = baseDatosCache.clima.avg_hum;
-        document.getElementById('uci-temp').innerText = baseDatosCache.clima.uci_temp + "°C";
-        document.getElementById('uci-hum').innerText = baseDatosCache.clima.uci_hum + "%";
-        document.getElementById('secadero-temp').innerText = baseDatosCache.clima.secadero_temp + "°C";
-        document.getElementById('secadero-hum').innerText = baseDatosCache.clima.secadero_hum + "%";
-        document.getElementById('fontana-temp').innerText = baseDatosCache.clima.fontana_temp + "°C";
-        document.getElementById('fontana-hum').innerText = baseDatosCache.clima.fontana_hum + "%";
+    function renderizarPildorasSelectoras() { 
+      const contenedor = document.getElementById('sensor-pills-container'); contenedor.innerHTML = ""; 
+      let listaDispositivos = contextoOrigenEsClima ? ['uci', 'secadero', 'fontana'] : ['al_jazz', 'genin', 'plumbago']; 
+      if (variableActiva === 'bateria') listaDispositivos = ['uci', 'secadero', 'fontana', 'al_jazz', 'genin', 'plumbago']; 
 
-        ['al_jazz', 'genin', 'plumbago'].forEach(id => {
-          document.getElementById(`${id}-battery`).innerText = baseDatosCache[id].battery;
-          document.getElementById(`${id}-moisture`).innerText = baseDatosCache[id].moisture + "%";
-          document.getElementById(`${id}-temp`).innerText = baseDatosCache[id].temp + "°C";
-          document.getElementById(`${id}-lux`).innerText = baseDatosCache[id].lux.toLocaleString('es-ES') + " Lux";
-          document.getElementById(`${id}-fertility`).innerHTML = baseDatosCache[id].fertility + ' <span class="text-[10px] font-normal opacity-60">µS</span>';
-          cargarFotoEnTarjetaHome(id);
-        });
+      listaDispositivos.forEach(id => { 
+        const estaActivo = sensoresSeleccionados.includes(id); const esElQueTieneFocoUmbral = id === plantaEnFocoParaUmbrales; 
+        const boton = document.createElement('button'); boton.innerText = id.replace('_', ' ').toUpperCase(); 
+        if (estaActivo) { 
+          boton.className = esElQueTieneFocoUmbral && variableActiva !== 'bateria' ? "px-3 py-1.5 rounded-full text-xs font-black bg-emerald-500 text-slate-950 border-2 border-white transition-all shadow-md" : "px-3 py-1.5 rounded-full text-xs font-bold bg-emerald-600 text-white transition-all"; 
+        } else { 
+          boton.className = visualLightMode ? "px-3 py-1.5 rounded-full text-xs font-medium bg-slate-200 text-slate-600 transition-all" : "px-3 py-1.5 rounded-full text-xs font-medium bg-slate-800 text-slate-400 hover:text-white transition-all"; 
+        } 
+        boton.onclick = () => toggleSeleccionSensorPildora(id); contenedor.appendChild(boton); 
+      }); 
+    } 
 
-        forzarApagadoSpinner();
-        if (idSensorActivo) actualizarValoresPantallaDetalle();
-      } catch (error) { 
-        console.error(error);
-        forzarApagadoSpinner();
-      }
-    }
+    function toggleSeleccionSensorPildora(id) { 
+      if (sensoresSeleccionados.includes(id)) { 
+        if (plantaEnFocoParaUmbrales !== id) { plantaEnFocoParaUmbrales = id; }  
+        else if (sensoresSeleccionados.length > 1) { sensoresSeleccionados = sensoresSeleccionados.filter(s => s !== id); plantaEnFocoParaUmbrales = sensoresSeleccionados[0]; } 
+      } else { sensoresSeleccionados.push(id); plantaEnFocoParaUmbrales = id; } 
+      renderizarPildorasSelectoras(); construirGraficoAnalitico(); 
+    } 
 
-    function abrirDetalle(idSensor, nombreVisible, colorClase) { contextoOrigenEsClima = false; idSensorActivo = idSensor; ejecutarTransicionDetalle(nombreVisible, colorClase); }
-    function abrirDetalleClima(idSensor, nombreVisible) { contextoOrigenEsClima = true; idSensorActivo = idSensor; ejecutarTransicionDetalle(nombreVisible, "bg-amber-500"); }
+    // 🛡️ MOTOR DE GRÁFICAS DE COBERTURA ESTRICTA v5.12.5 (Sincroniza Climas y Corta a la hora real de hoy) 
+    function construirGraficoAnalitico() { 
+      const ctx = document.getElementById('canvas-chart-js').getContext('2d'); if (miGraficoChartJS) miGraficoChartJS.destroy(); 
+      const unidadMedida = SIMBOLOS_UNIDADES[variableActiva] || ""; const configuracionColor = COLORES_VARIABLES[variableActiva]; 
 
-    function ejecutarTransicionDetalle(nombreVisible, colorClase) {
-      document.getElementById('detail-title').innerText = nombreVisible;
-      const dot = document.getElementById('detail-dot'); dot.className = `h-2 w-2 rounded-full ${colorClase}`;
-      let fallbackTexto = baseDatosCache && baseDatosCache.appConfig ? (baseDatosCache.appConfig[`txt_${idSensorActivo}`] || "Ficha Técnica en Vivo") : "Ficha Técnica en Vivo";
-      document.getElementById('input-sub-libre').value = fallbackTexto;
-      actualizarValoresPantallaDetalle(); cargarFotoDeMemoria(idSensorActivo);
-      document.getElementById('view-home').className = 'max-w-md mx-auto p-4 pb-24 view-hidden'; 
-      document.getElementById('view-detail').className = 'max-w-md mx-auto p-4 pb-24';
-      window.scrollTo(0, 0);
-    }
+      let etiquetasEjeX = []; 
+      let mapeoDatosEstructurado = {}; 
+      let hoy = new Date();
 
-    function actualizarValoresPantallaDetalle() {
-      if (!baseDatosCache || !idSensorActivo) return;
-      const esClima = ['uci', 'secadero', 'fontana'].includes(idSensorActivo);
-      if (esClima) {
-        document.getElementById('detail-moisture').innerText = baseDatosCache.clima[`${idSensorActivo}_hum`] + "%";
-        document.getElementById('detail-temp').innerText = baseDatosCache.clima[`${idSensorActivo}_temp`] + "°C";
-        document.getElementById('detail-lux').innerText = "-- Lux"; document.getElementById('detail-fertility').innerHTML = "--";
-        document.getElementById('detail-battery-lbl').innerText = "99";
-      } else {
-        const sensor = baseDatosCache[idSensorActivo];
-        document.getElementById('detail-moisture').innerText = sensor.moisture + "%";
-        document.getElementById('detail-temp').innerText = sensor.temp + "°C";
-        document.getElementById('detail-lux').innerText = sensor.lux.toLocaleString('es-ES') + " Lux";
-        document.getElementById('detail-fertility').innerHTML = sensor.fertility + ' <span class="text-[10px] font-normal opacity-60">µS</span>';
-        document.getElementById('detail-battery-lbl').innerText = sensor.battery;
-      }
-    }
+      if (filtroTiempoActivo === 'dia') { 
+        for (let h = 0; h <= 24; h++) { etiquetasEjeX.push((h < 10 ? '0'+h : h) + ':00'); } 
+      } else if (filtroTiempoActivo === 'mes') { 
+        for (let d = 1; d <= 30; d++) { etiquetasEjeX.push((d < 10 ? '0'+d : d) + '/06'); } 
+      } else { 
+        etiquetasEjeX = ["Jun 26", "Jul 26", "Ago 26", "Sep 26", "Oct 26", "Nov 26", "Dic 26", "Ene 27", "Feb 27", "Mar 27", "Abr 27", "May 27", "Jun 27"]; 
+      } 
 
-    async function salvarTextoFichaNube() {
-      const txt = document.getElementById('input-sub-libre').value;
-      if(baseDatosCache && baseDatosCache.appConfig) baseDatosCache.appConfig[`txt_${idSensorActivo}`] = txt;
-      let elHome = document.getElementById(`lbl-${idSensorActivo}-sub`); if (elHome) elHome.innerText = txt;
-      fetch(API_URL, { method: "POST", body: JSON.stringify({ clave: `txt_${idSensorActivo}`, valor: txt }) }).catch(e => console.error(e));
-    }
+      sensoresSeleccionados.forEach(id => { mapeoDatosEstructurado[id] = new Array(etiquetasEjeX.length).fill(null); }); 
+      let totalPuntosEnCanvas = []; 
 
-    function dispararCargaImagenCarga() { document.getElementById('bg-picker-global').value = ""; document.getElementById('bg-picker-global').click(); }
-
-    document.getElementById('bg-picker-global').addEventListener('change', function(e) {
-      const file = e.target.files[0]; if (!file) return;
-      const reader = new FileReader();
-      reader.onload = function(event) {
-        const img = new Image(); img.onload = function() {
-          const canvas = document.createElement('canvas'); const MAX_WIDTH = 400; let width = img.width; let height = img.height;
-          if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
-          canvas.width = width; canvas.height = height; const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, width, height);
-          const compressedBase64 = canvas.toDataURL('image/jpeg', 0.4);
-          fetch(API_URL, { method: "POST", body: JSON.stringify({ clave: "img_loading", valor: compressedBase64 }) }).then(r => r.json()).then(res => { if(res.success) alert("Pantalla de inicio compartida."); });
-        }; img.src = event.target.result;
-      }; reader.readAsDataURL(file);
-    });
-
-    function abrirPantallaGrafica(variable) {
-      variableActiva = variable; filtroTiempoActivo = 'dia'; sensoresSeleccionados = [idSensorActivo]; plantaEnFocoParaUmbrales = idSensorActivo; 
-      document.getElementById('chart-variable-title').innerText = variable.toUpperCase();
-      document.getElementById('view-detail').className = 'max-w-md mx-auto p-4 pb-24 view-hidden'; 
-      document.getElementById('view-charts').className = 'max-w-md mx-auto p-4 pb-24';
-      cambiarFiltroTiempo('dia');
-    }
-
-    function renderizarPildorasSelectoras() {
-      const contenedor = document.getElementById('sensor-pills-container'); contenedor.innerHTML = "";
-      let listaDispositivos = contextoOrigenEsClima ? ['uci', 'secadero', 'fontana'] : ['al_jazz', 'genin', 'plumbago'];
-      if (variableActiva === 'bateria') listaDispositivos = ['uci', 'secadero', 'fontana', 'al_jazz', 'genin', 'plumbago'];
-
-      listaDispositivos.forEach(id => {
-        const estaActivo = sensoresSeleccionados.includes(id); const esElQueTieneFocoUmbral = id === plantaEnFocoParaUmbrales;
-        const boton = document.createElement('button'); boton.innerText = id.replace('_', ' ').toUpperCase();
-        if (estaActivo) {
-          boton.className = esElQueTieneFocoUmbral && variableActiva !== 'bateria' ? "px-3 py-1.5 rounded-full text-xs font-black bg-emerald-500 text-slate-950 border-2 border-white transition-all shadow-md" : "px-3 py-1.5 rounded-full text-xs font-bold bg-emerald-600 text-white transition-all";
-        } else {
-          boton.className = visualLightMode ? "px-3 py-1.5 rounded-full text-xs font-medium bg-slate-200 text-slate-600 transition-all" : "px-3 py-1.5 rounded-full text-xs font-medium bg-slate-800 text-slate-400 hover:text-white transition-all";
-        }
-        boton.onclick = () => toggleSeleccionSensorPildora(id); contenedor.appendChild(boton);
-      });
-    }
-
-    function toggleSeleccionSensorPildora(id) {
-      if (sensoresSeleccionados.includes(id)) {
-        if (plantaEnFocoParaUmbrales !== id) { plantaEnFocoParaUmbrales = id; } 
-        else if (sensoresSeleccionados.length > 1) { sensoresSeleccionados = sensoresSeleccionados.filter(s => s !== id); plantaEnFocoParaUmbrales = sensoresSeleccionados[0]; }
-      } else { sensoresSeleccionados.push(id); plantaEnFocoParaUmbrales = id; }
-      renderizarPildorasSelectoras(); construirGraficoAnalitico();
-    }
-
-    // 🛡️ MOTOR DE GRÁFICAS DE PRECISIÓN ABSOLUTA v5.9.4 (Traductor castellano-inglés para temperaturas)
-    function construirGraficoAnalitico() {
-      const ctx = document.getElementById('canvas-chart-js').getContext('2d'); if (miGraficoChartJS) miGraficoChartJS.destroy();
-      const unidadMedida = SIMBOLOS_UNIDADES[variableActiva] || ""; const configuracionColor = COLORES_VARIABLES[variableActiva];
-
-      let etiquetasEjeX = [];
-      let mapeoDatosEstructurado = {};
-
-      if (filtroTiempoActivo === 'dia') {
-        for (let h = 0; h <= 24; h++) { etiquetasEjeX.push((h < 10 ? '0'+h : h) + ':00'); }
-      } else if (filtroTiempoActivo === 'mes') {
-        for (let d = 1; d <= 30; d++) { etiquetasEjeX.push((d < 10 ? '0'+d : d) + '/06'); }
-      } else {
-        etiquetasEjeX = ["Jun 26", "Jul 26", "Ago 26", "Sep 26", "Oct 26", "Nov 26", "Dic 26", "Ene 27", "Feb 27", "Mar 27", "Abr 27", "May 27", "Jun 27"];
-      }
-
-      sensoresSeleccionados.forEach(id => { mapeoDatosEstructurado[id] = new Array(etiquetasEjeX.length).fill(null); });
-      let totalPuntosEnCanvas = [];
-
-      if (baseDatosCache && baseDatosCache.dbHistorico) {
-        const registros = baseDatosCache.dbHistorico;
-        
-        if (filtroTiempoActivo === 'dia') {
-          let acumuladorPorHora = {};
-          let ultimaHoraConDatos = -1;
+      if (baseDatosCache && baseDatosCache.dbHistorico) { 
+        const registros = baseDatosCache.dbHistorico; 
           
-          registros.forEach(nodo => {
-            let f = new Date(nodo.f);
+        if (filtroTiempoActivo === 'dia') { 
+          let acumuladorPorHora = {}; 
+          let ultimaHoraConDatos = -1; 
+            
+          registros.forEach(nodo => { 
+            let f = new Date(nodo.f); 
+            if (isNaN(f.getTime())) return;  
+            
+            // 🛡️ FILTRO CRÍTICO HOY ES HOY: Ignora las 22h de días pasados
+            if (f.getDate() !== hoy.getDate() || f.getMonth() !== hoy.getMonth() || f.getFullYear() !== hoy.getFullYear()) return;
+
+            let h = f.getHours(); 
+            if (!acumuladorPorHora[h]) acumuladorPorHora[h] = {}; 
+              
+            sensoresSeleccionados.forEach(id => { 
+              if (!acumuladorPorHora[h][id]) acumuladorPorHora[h][id] = []; 
+                
+              let val = null; 
+              if (variableActiva === 'bateria') val = nodo[id].battery; 
+              else if (variableActiva === 'humedad') val = nodo[id].moisture !== undefined ? nodo[id].moisture : nodo[id].hum; 
+              else if (variableActiva === 'temperatura') {
+                // 🛡️ COMPATIBILIDAD SÍNCRONA: UCI, Fontana y Secadero mapean .temp o las claves del clima de ambiente
+                val = nodo[id].temp !== undefined ? nodo[id].temp : baseDatosCache.clima[`${id}_temp`];
+              } else val = nodo[id][variableActiva]; 
+                
+              if (val !== null && val !== undefined && val !== 0 && !isNaN(Number(val))) { 
+                acumuladorPorHora[h][id].push(Number(val)); 
+                if (h > ultimaHoraConDatos) ultimaHoraConDatos = h; 
+              } 
+            }); 
+          }); 
+
+          for (let h = 0; h <= 24; h++) { 
+            if (h > ultimaHoraConDatos) break; // 🛡️ CORTE ABSOLUTO: No dibuja el futuro
+            if (acumuladorPorHora[h]) { 
+              sensoresSeleccionados.forEach(id => { 
+                let listado = acumuladorPorHora[h][id] || []; 
+                if (listado.length > 0) { 
+                  let prom = listado.reduce((a,b)=>a+b, 0) / listado.length; 
+                  let finalVal = Math.ceil(prom * 100) / 100; 
+                  mapeoDatosEstructurado[id][h] = finalVal; 
+                  totalPuntosEnCanvas.push(finalVal); 
+                } 
+              }); 
+            } 
+          } 
+        } else if (filtroTiempoActivo === 'mes') { 
+          let acumuladorPorDia = {}; 
+          let ultimoDiaConDatos = -1; 
+            
+          registros.forEach(nodo => { 
+            let f = new Date(nodo.f); 
+            if (isNaN(f.getTime()) || f.getMonth() !== 5) return;  
+            let d = f.getDate(); 
+              
+            if (!acumuladorPorDia[d]) acumuladorPorDia[d] = {}; 
+            sensoresSeleccionados.forEach(id => { 
+              if (!acumuladorPorDia[d][id]) acumuladorPorDia[d][id] = []; 
+                
+              let val = null; 
+              if (variableActiva === 'bateria') val = nodo[id].battery; 
+              else if (variableActiva === 'humedad') val = nodo[id].moisture !== undefined ? nodo[id].moisture : nodo[id].hum; 
+              else if (variableActiva === 'temperatura') val = nodo[id].temp !== undefined ? nodo[id].temp : baseDatosCache.clima[`${id}_temp`];
+              else val = nodo[id][variableActiva]; 
+                
+              if (val !== null && val !== undefined && val !== 0 && !isNaN(Number(val))) { 
+                acumuladorPorDia[d][id].push(Number(val)); 
+                if (d > ultimoDiaConDatos) ultimoDiaConDatos = d; 
+              } 
+            }); 
+          }); 
+
+          for (let d = 1; d <= 30; d++) { 
+            if (d > ultimoDiaConDatos) break; 
+            if (acumuladorPorDia[d]) { 
+              sensoresSeleccionados.forEach(id => { 
+                let listado = acumuladorPorDia[d][id] || []; 
+                if (listado.length > 0) { 
+                  let prom = listado.reduce((a,b)=>a+b, 0) / listado.length; 
+                  let finalVal = Math.ceil(prom * 100) / 100; 
+                  mapeoDatosEstructurado[id][d - 1] = finalVal; 
+                  totalPuntosEnCanvas.push(finalVal); 
+                } 
+              }); 
+            } 
+          } 
+        } else { 
+          let acumuladorPorMes = {}; 
+          let ultimoMesConDatos = 0; 
+
+          registros.forEach(nodo => { 
+            let f = new Date(nodo.f); 
             if (isNaN(f.getTime())) return; 
-            let h = f.getHours();
-            if (!acumuladorPorHora[h]) acumuladorPorHora[h] = {};
-            
-            sensoresSeleccionados.forEach(id => {
-              if (!acumuladorPorHora[h][id]) acumuladorPorHora[h][id] = [];
+            let mIdx = f.getMonth(); 
+            let xPos = (mIdx >= 5) ? (mIdx - 5) : (mIdx + 7); 
               
-              // 🛡️ TRADUCTOR CLAVE: Mapeamos 'temperatura' a la clave acortada 'temp' del servidor
-              let val = null;
-              if (variableActiva === 'bateria') val = nodo[id].battery;
-              else if (variableActiva === 'humedad') val = nodo[id].moisture !== undefined ? nodo[id].moisture : nodo[id].hum;
-              else if (variableActiva === 'temperatura') val = nodo[id].temp;
-              else val = nodo[id][variableActiva];
-              
-              if (val !== null && val !== undefined && val !== 0) {
-                acumuladorPorHora[h][id].push(val);
-                if (h > ultimaHoraConDatos) ultimaHoraConDatos = h;
-              }
-            });
-          });
+            if (!acumuladorPorMes[xPos]) acumuladorPorMes[xPos] = {}; 
+            sensoresSeleccionados.forEach(id => { 
+              if (!acumuladorPorMes[xPos][id]) acumuladorPorMes[xPos][id] = []; 
+                
+              let val = null; 
+              if (variableActiva === 'bateria') val = nodo[id].battery; 
+              else if (variableActiva === 'humedad') val = nodo[id].moisture !== undefined ? nodo[id].moisture : nodo[id].hum; 
+              else if (variableActiva === 'temperatura') val = nodo[id].temp !== undefined ? nodo[id].temp : baseDatosCache.clima[`${id}_temp`];
+              else val = nodo[id][variableActiva]; 
+                
+              if (val !== null && val !== undefined && val !== 0 && !isNaN(Number(val))) { 
+                acumuladorPorMes[xPos][id].push(Number(val)); 
+                if (xPos > ultimoMesConDatos) ultimoMesConDatos = xPos; 
+              } 
+            }); 
+          }); 
 
-          for (let h = 0; h <= 24; h++) {
-            if (h > ultimaHoraConDatos) break; 
-            if (acumuladorPorHora[h]) {
-              sensoresSeleccionados.forEach(id => {
-                let listado = acumuladorPorHora[h][id] || [];
-                if (listado.length > 0) {
-                  let prom = listado.reduce((a,b)=>a+b, 0) / listado.length;
-                  let finalVal = Math.ceil(prom * 100) / 100;
-                  mapeoDatosEstructurado[id][h] = finalVal;
-                  totalPuntosEnCanvas.push(finalVal);
-                }
-              });
-            }
-          }
-        } else if (filtroTiempoActivo === 'mes') {
-          let acumuladorPorDia = {};
-          let ultimoDiaConDatos = -1;
-          
-          registros.forEach(nodo => {
-            let f = new Date(nodo.f);
-            if (isNaN(f.getTime()) || f.getMonth() !== 5) return; 
-            let d = f.getDate();
-            
-            if (!acumuladorPorDia[d]) acumuladorPorDia[d] = {};
-            sensoresSeleccionados.forEach(id => {
-              if (!acumuladorPorDia[d][id]) acumuladorPorDia[d][id] = [];
-              
-              let val = null;
-              if (variableActiva === 'bateria') val = nodo[id].battery;
-              else if (variableActiva === 'humedad') val = nodo[id].moisture !== undefined ? nodo[id].moisture : nodo[id].hum;
-              else if (variableActiva === 'temperatura') val = nodo[id].temp;
-              else val = nodo[id][variableActiva];
-              
-              if (val !== null && val !== undefined && val !== 0) {
-                acumuladorPorDia[d][id].push(val);
-                if (d > ultimoDiaConDatos) ultimoDiaConDatos = d;
-              }
-            });
-          });
+          for (let m = 0; m < 13; m++) { 
+            if (m > ultimoMesConDatos) break; 
+            if (acumuladorPorMes[m]) { 
+              sensoresSeleccionados.forEach(id => { 
+                let listado = acumuladorPorMes[m][id] || []; 
+                if (listado.length > 0) { 
+                  let prom = listado.reduce((a,b)=>a+b, 0) / listado.length; 
+                  let finalVal = Math.ceil(prom * 100) / 100; 
+                  mapeoDatosEstructurado[id][m] = finalVal; 
+                  totalPuntosEnCanvas.push(finalVal); 
+                } 
+              }); 
+            } 
+          } 
+        } 
+      } 
 
-          for (let d = 1; d <= 30; d++) {
-            if (d > ultimoDiaConDatos) break;
-            if (acumuladorPorDia[d]) {
-              sensoresSeleccionados.forEach(id => {
-                let listado = acumuladorPorDia[d][id] || [];
-                if (listado.length > 0) {
-                  let prom = listado.reduce((a,b)=>a+b, 0) / listado.length;
-                  let finalVal = Math.ceil(prom * 100) / 100;
-                  mapeoDatosEstructurado[id][d - 1] = finalVal;
-                  totalPuntosEnCanvas.push(finalVal);
-                }
-              });
-            }
-          }
-        } else {
-          let acumuladorPorMes = {};
-          let ultimoMesConDatos = 0;
+      let rango = { min: 0, max: 100 }; 
+      try { 
+        const plantaKeyLimpia = plantaEnFocoParaUmbrales ? plantaEnFocoParaUmbrales.toLowerCase().trim() : ''; 
+        const varKeyLimpia = variableActiva ? variableActiva.toLowerCase().trim() : ''; 
+        if (diccionarioRangosSheet2 && diccionarioRangosSheet2[plantaKeyLimpia] && diccionarioRangosSheet2[plantaKeyLimpia][varKeyLimpia]) { 
+          rango = { min: Number(diccionarioRangosSheet2[plantaKeyLimpia][varKeyLimpia].min), max: Number(diccionarioRangosSheet2[plantaKeyLimpia][varKeyLimpia].max) }; 
+        } else { 
+          rango = (RANGOS_AGRICOLAS[plantaEnFocoParaUmbrales] || {})[variableActiva] || { min: 0, max: 50 }; 
+        } 
+      } catch (err) { rango = { min: 0, max: 50 }; } 
 
-          registros.forEach(nodo => {
-            let f = new Date(nodo.f);
-            if (isNaN(f.getTime())) return;
-            let mIdx = f.getMonth();
-            let xPos = (mIdx >= 5) ? (mIdx - 5) : (mIdx + 7);
-            
-            if (!acumuladorPorMes[xPos]) acumuladorPorMes[xPos] = {};
-            sensoresSeleccionados.forEach(id => {
-              if (!acumuladorPorMes[xPos][id]) acumuladorPorMes[xPos][id] = [];
-              
-              let val = null;
-              if (variableActiva === 'bateria') val = nodo[id].battery;
-              else if (variableActiva === 'humedad') val = nodo[id].moisture !== undefined ? nodo[id].moisture : nodo[id].hum;
-              else if (variableActiva === 'temperatura') val = nodo[id].temp;
-              else val = nodo[id][variableActiva];
-              
-              if (val !== null && val !== undefined && val !== 0) {
-                acumuladorPorMes[xPos][id].push(val);
-                if (xPos > ultimoMesConDatos) ultimoMesConDatos = xPos;
-              }
-            });
-          });
+      const datasetsLineas = sensoresSeleccionados.map(id => { 
+        const esLiderActual = id === plantaEnFocoParaUmbrales; 
+        return { 
+          label: id.replace('_', ' ').toUpperCase(), 
+          data: mapeoDatosEstructurado[id], 
+          borderColor: configuracionColor.linea, 
+          backgroundColor: `rgba(${parseInt(configuracionColor.linea.slice(1,3),16)},${parseInt(configuracionColor.linea.slice(3,5),16)},${parseInt(configuracionColor.linea.slice(5,7),16)},${esLiderActual ? '0.04':'0.01'})`, 
+          borderWidth: esLiderActual ? 3 : 1.5, 
+          fill: true, tension: 0.20, pointRadius: function(context) { 
+            let dataset = context.dataset.data; let idxUltimoDato = -1; 
+            for(let i=0; i<dataset.length; i++) { if(dataset[i] !== null) idxUltimoDato = i; } 
+            return context.dataIndex === idxUltimoDato ? 5 : (filtroTiempoActivo === 'dia' ? 0 : 3); 
+          }, 
+          pointHitRadius: 25, spanGaps: false 
+        }; 
+      }); 
 
-          for (let m = 0; m < 13; m++) {
-            if (m > ultimoMesConDatos) break;
-            if (acumuladorPorMes[m]) {
-              sensoresSeleccionados.forEach(id => {
-                let listado = acumuladorPorMes[m][id] || [];
-                if (listado.length > 0) {
-                  let prom = listado.reduce((a,b)=>a+b, 0) / listado.length;
-                  let finalVal = Math.ceil(prom * 100) / 100;
-                  mapeoDatosEstructurado[id][m] = finalVal;
-                  totalPuntosEnCanvas.push(finalVal);
-                }
-              });
-            }
-          }
-        }
-      }
+      let finalMinY = 0; // 🛡️ ORIGEN DEL EJE VERTICAL CLAVADO EN 0 EN TODAS LAS VISTAS
+      let finalMaxY = (variableActiva === 'humedad' || variableActiva === 'bateria') ? 100 : rango.max; 
 
-      let rango = { min: 0, max: 100 };
-      try {
-        const plantaKeyLimpia = plantaEnFocoParaUmbrales ? plantaEnFocoParaUmbrales.toLowerCase().trim() : '';
-        const varKeyLimpia = variableActiva ? variableActiva.toLowerCase().trim() : '';
-        if (diccionarioRangosSheet2 && diccionarioRangosSheet2[plantaKeyLimpia] && diccionarioRangosSheet2[plantaKeyLimpia][varKeyLimpia]) {
-          rango = { min: Number(diccionarioRangosSheet2[plantaKeyLimpia][varKeyLimpia].min), max: Number(diccionarioRangosSheet2[plantaKeyLimpia][varKeyLimpia].max) };
-        } else {
-          rango = (RANGOS_AGRICOLAS[plantaEnFocoParaUmbrales] || {})[variableActiva] || { min: 0, max: 50 };
-        }
-      } catch (err) { rango = { min: 0, max: 50 }; }
+      if (totalPuntosEnCanvas.length > 0 && variableActiva !== 'humedad' && variableActiva !== 'bateria') { 
+        const maxReal = Math.max(...totalPuntosEnCanvas); 
+        let delta = finalMaxY - finalMinY; if (delta <= 0) delta = 10; 
+        let padding = delta * 0.10; finalMaxY = Math.max(finalMaxY, maxReal) + padding; 
+      } 
 
-      const datasetsLineas = sensoresSeleccionados.map(id => {
-        const esLiderActual = id === plantaEnFocoParaUmbrales;
-        return {
-          label: id.replace('_', ' ').toUpperCase(),
-          data: mapeoDatosEstructurado[id],
-          borderColor: configuracionColor.linea,
-          backgroundColor: `rgba(${parseInt(configuracionColor.linea.slice(1,3),16)},${parseInt(configuracionColor.linea.slice(3,5),16)},${parseInt(configuracionColor.linea.slice(5,7),16)},${esLiderActual ? '0.04':'0.01'})`,
-          borderWidth: esLiderActual ? 3 : 1.5,
-          fill: true, tension: 0.20, pointRadius: function(context) {
-            let dataset = context.dataset.data; let idxUltimoDato = -1;
-            for(let i=0; i<dataset.length; i++) { if(dataset[i] !== null) idxUltimoDato = i; }
-            return context.dataIndex === idxUltimoDato ? 5 : (filtroTiempoActivo === 'dia' ? 0 : 3);
-          },
-          pointHitRadius: 25, spanGaps: false
-        };
-      });
+      const habilitarCajaFlotante = sensoresSeleccionados.length === 1; 
 
-      let finalMinY = 0; // 🛡️ ORIGEN DEL EJE VERTICAL CLAVADO EN 0
-      let finalMaxY = (variableActiva === 'humedad' || variableActiva === 'bateria') ? 100 : rango.max;
+      miGraficoChartJS = new Chart(ctx, { 
+        type: 'line', data: { labels: etiquetasEjeX, datasets: datasetsLineas }, 
+        options: { 
+          responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false }, 
+          plugins: { 
+            legend: { display: false }, 
+            tooltip: { 
+              enabled: habilitarCajaFlotante, mode: 'index', intersect: false,  
+              backgroundColor: visualLightMode ? 'rgba(255, 255, 255, 0.95)' : 'rgba(15, 23, 42, 0.95)', 
+              titleColor: visualLightMode ? '#334155' : '#94a3b8', bodyColor: visualLightMode ? '#0f172a' : '#ffffff', 
+              borderColor: 'rgba(51, 65, 85, 0.2)', borderWidth: 1, displayColors: false, 
+              callbacks: { title: function(context) { return `Registro: ${context[0].label}`; }, label: function(context) { return `Media Real: ${Number(context.raw).toFixed(2)}${unidadMedida}`; } }, 
+              external: function(context) { 
+                const tooltipModel = context.tooltip; if (tooltipModel.opacity === 0) return; 
+                let txtLectura = ""; tooltipModel.dataPoints.forEach(pt => { txtLectura += `${pt.dataset.label}: ${pt.raw !== null ? Number(pt.raw).toFixed(2) + unidadMedida : '--'} | `; }); 
+                document.getElementById('scrub-value').innerText = txtLectura.slice(0, -3); 
+                document.getElementById('scrub-time').innerText = `Punto Eje X: ${tooltipModel.dataPoints[0].label}`; 
+              } 
+            } 
+          }, 
+          scales: { 
+            x: { grid: { display: false }, ticks: { color: visualLightMode ? '#475569' : '#94a3b8', font: { family: 'monospace', size: 10 } } }, 
+            y: { grid: { color: visualLightMode ? 'rgba(0,0,0,0.04)' : 'rgba(148,163,184,0.06)' }, ticks: { color: visualLightMode ? '#475569' : '#94a3b8', font: { family: 'monospace', size: 10 } }, min: finalMinY, max: Math.round(finalMaxY) } 
+          } 
+        } 
+      }); 
+    } 
 
-      if (totalPuntosEnCanvas.length > 0 && variableActiva !== 'humedad' && variableActiva !== 'bateria') {
-        const maxReal = Math.max(...totalPuntosEnCanvas);
-        let delta = finalMaxY - finalMinY; if (delta <= 0) delta = 10;
-        let padding = delta * 0.10; finalMaxY = Math.max(finalMaxY, maxReal) + padding;
-      }
+    function toggleVisualMode() { 
+      visualLightMode = !visualLightMode; 
+      const b = document.getElementById('master-body'); const btn = document.getElementById('btn-mode-toggle'); 
+      const ico = document.getElementById('icon-mode'); const lbl = document.getElementById('lbl-mode-btn'); 
 
-      const habilitarCajaFlotante = sensoresSeleccionados.length === 1;
+      if(visualLightMode) { 
+        b.className = "bg-slate-50 text-slate-900 font-sans min-h-screen antialiased"; 
+        btn.className = "px-5 py-2.5 bg-white text-slate-900 rounded-full border border-slate-300 font-bold text-xs flex items-center gap-2 shadow-2xl transition-all"; 
+        ico.className = "fa-solid fa-moon text-indigo-600"; lbl.innerText = "Dark Mode"; 
+        document.querySelectorAll('.card-ui').forEach(el => { el.style.backgroundColor = "#ffffff"; el.style.borderColor = "#cbd5e1"; }); 
+        document.querySelectorAll('.metric-box').forEach(el => { el.style.backgroundColor = "#f1f5f9"; el.style.borderColor = "#e2e8f0"; }); 
+        document.querySelectorAll('.title-ui').forEach(el => el.style.color = "#0f172a"); 
+        document.querySelectorAll('.sub-ui').forEach(el => el.style.color = "#475569"); 
+      } else { 
+        b.className = "bg-slate-900 text-slate-100 font-sans min-h-screen antialiased"; 
+        btn.className = "px-5 py-2.5 bg-slate-800 text-white rounded-full border border-slate-700 font-bold text-xs flex items-center gap-2 shadow-2xl transition-all hover:scale-105"; 
+        ico.className = "fa-solid fa-sun text-amber-400"; lbl.innerText = "Light Mode"; 
+        document.querySelectorAll('.card-ui').forEach(el => { el.style.backgroundColor = "#1e293b"; el.style.borderColor = "rgba(51, 65, 85, 0.6)"; }); 
+        document.querySelectorAll('.metric-box').forEach(el => { el.style.backgroundColor = "rgba(15, 23, 42, 0.60)"; el.style.borderColor = "rgba(51, 65, 85, 0.3)"; }); 
+        document.querySelectorAll('.title-ui').forEach(el => el.style.color = "#ffffff"); 
+        document.querySelectorAll('.sub-ui').forEach(el => el.style.color = "#94a3b8"); 
+      } 
+      if(miGraficoChartJS) construirGraficoAnalitico(); 
+    } 
 
-      miGraficoChartJS = new Chart(ctx, {
-        type: 'line', data: { labels: etiquetasEjeX, datasets: datasetsLineas },
-        options: {
-          responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              enabled: habilitarCajaFlotante, mode: 'index', intersect: false, 
-              backgroundColor: visualLightMode ? 'rgba(255, 255, 255, 0.95)' : 'rgba(15, 23, 42, 0.95)',
-              titleColor: visualLightMode ? '#334155' : '#94a3b8', bodyColor: visualLightMode ? '#0f172a' : '#ffffff',
-              borderColor: 'rgba(51, 65, 85, 0.2)', borderWidth: 1, displayColors: false,
-              callbacks: { title: function(context) { return `Registro: ${context[0].label}`; }, label: function(context) { return `Media Real: ${Number(context.raw).toFixed(2)}${unidadMedida}`; } },
-              external: function(context) {
-                const tooltipModel = context.tooltip; if (tooltipModel.opacity === 0) return;
-                let txtLectura = ""; tooltipModel.dataPoints.forEach(pt => { txtLectura += `${pt.dataset.label}: ${pt.raw !== null ? Number(pt.raw).toFixed(2) + unidadMedida : '--'} | `; });
-                document.getElementById('scrub-value').innerText = txtLectura.slice(0, -3);
-                document.getElementById('scrub-time').innerText = `Punto Eje X: ${tooltipModel.dataPoints[0].label}`;
-              }
-            }
-          },
-          scales: {
-            x: { grid: { display: false }, ticks: { color: visualLightMode ? '#475569' : '#94a3b8', font: { family: 'monospace', size: 10 } } },
-            y: { grid: { color: visualLightMode ? 'rgba(0,0,0,0.04)' : 'rgba(148,163,184,0.06)' }, ticks: { color: visualLightMode ? '#475569' : '#94a3b8', font: { family: 'monospace', size: 10 } }, min: finalMinY, max: Math.round(finalMaxY) }
-          }
-        }
-      });
-    }
+    function cambiarFiltroTiempo(filtro) { filtroTiempoActivo = filtro; ['dia', 'mes', 'ano'].forEach(f => { const btn = document.getElementById(`btn-time-${f}`); if(btn) btn.className = f === filtro ? "py-2 rounded-lg text-xs font-bold bg-slate-700 text-white uppercase tracking-wider" : "py-2 rounded-lg text-xs font-medium text-slate-400 uppercase tracking-wider"; }); renderizarPildorasSelectoras(); construirGraficoAnalitico(); } 
+    function volverAHome() { idSensorActivo = null; document.getElementById('view-detail').className = 'max-w-md mx-auto p-4 pb-24 view-hidden'; document.getElementById('view-home').className = 'max-w-md mx-auto p-4 pb-24'; if(baseDatosCache) cargarDatosMeteo(); } 
+    function volverADetalle() { document.getElementById('view-charts').className = 'max-w-md mx-auto p-4 pb-24 view-hidden'; document.getElementById('view-detail').className = 'max-w-md mx-auto p-4 pb-24'; } 
+    function toggleAcordeonMonitorizacion() { const acc = document.getElementById('monitor-accordion'); const arrow = document.getElementById('monitor-arrow'); if (acc.classList.contains('open')) { acc.classList.remove('open'); arrow.classList.remove('rotate-180'); } else { acc.classList.add('open'); arrow.classList.add('rotate-180'); } } 
+    function dispararCargaImagen() { document.getElementById('image-picker').value = ""; document.getElementById('image-picker').click(); } 
+    function dispararCargaImagenCarga() { document.getElementById('bg-picker-global').value = ""; document.getElementById('bg-picker-global').click(); } 
 
-    function toggleVisualMode() {
-      visualLightMode = !visualLightMode;
-      const b = document.getElementById('master-body'); const btn = document.getElementById('btn-mode-toggle');
-      const ico = document.getElementById('icon-mode'); const lbl = document.getElementById('lbl-mode-btn');
+    function cargarFotoDeMemoria(idSensor) { const fotoGuardada = localStorage.getItem(`foto_${idSensor}`); if (fotoGuardada) establecerFotoPantalla(fotoGuardada); } 
+    function cargarFotoEnTarjetaHome(idSensor) { const card = document.getElementById(`card-${idSensor}`); const overlay = document.getElementById(`overlay-${idSensor}`); const fotoGuardada = localStorage.getItem(`foto_${idSensor}`); if (card && fotoGuardada) { card.style.backgroundImage = `url('${fotoGuardada}')`; if (overlay) overlay.style.opacity = "0.85"; } } 
+    function establecerFotoPantalla(base64Str) { } 
 
-      if(visualLightMode) {
-        b.className = "bg-slate-50 text-slate-900 font-sans min-h-screen antialiased";
-        btn.className = "px-5 py-2.5 bg-white text-slate-900 rounded-full border border-slate-300 font-bold text-xs flex items-center gap-2 shadow-2xl transition-all";
-        ico.className = "fa-solid fa-moon text-indigo-600"; lbl.innerText = "Dark Mode";
-        document.querySelectorAll('.card-ui').forEach(el => { el.style.backgroundColor = "#ffffff"; el.style.borderColor = "#cbd5e1"; });
-        document.querySelectorAll('.metric-box').forEach(el => { el.style.backgroundColor = "#f1f5f9"; el.style.borderColor = "#e2e8f0"; });
-        document.querySelectorAll('.title-ui').forEach(el => el.style.color = "#0f172a");
-        document.querySelectorAll('.sub-ui').forEach(el => el.style.color = "#475569");
-      } else {
-        b.className = "bg-slate-900 text-slate-100 font-sans min-h-screen antialiased";
-        btn.className = "px-5 py-2.5 bg-slate-800 text-white rounded-full border border-slate-700 font-bold text-xs flex items-center gap-2 shadow-2xl transition-all";
-        ico.className = "fa-solid fa-sun text-amber-400"; lbl.innerText = "Light Mode";
-        document.querySelectorAll('.card-ui').forEach(el => { el.style.backgroundColor = "#1e293b"; el.style.borderColor = "rgba(51, 65, 85, 0.6)"; });
-        document.querySelectorAll('.metric-box').forEach(el => { el.style.backgroundColor = "rgba(15, 23, 42, 0.60)"; el.style.borderColor = "rgba(51, 65, 85, 0.3)"; });
-        document.querySelectorAll('.title-ui').forEach(el => el.style.color = "#ffffff");
-        document.querySelectorAll('.sub-ui').forEach(el => el.style.color = "#94a3b8");
-      }
-      if(miGraficoChartJS) construirGraficoAnalitico();
-    }
-
-    function cambiarFiltroTiempo(filtro) { filtroTiempoActivo = filtro; ['dia', 'mes', 'ano'].forEach(f => { const btn = document.getElementById(`btn-time-${f}`); if(btn) btn.className = f === filtro ? "py-2 rounded-lg text-xs font-bold bg-slate-700 text-white uppercase tracking-wider" : "py-2 rounded-lg text-xs font-medium text-slate-400 uppercase tracking-wider"; }); renderizarPildorasSelectoras(); construirGraficoAnalitico(); }
-    function volverAHome() { idSensorActivo = null; document.getElementById('view-detail').className = 'max-w-md mx-auto p-4 pb-24 view-hidden'; document.getElementById('view-home').className = 'max-w-md mx-auto p-4 pb-24'; if(baseDatosCache) cargarDatosMeteo(); }
-    function volverADetalle() { document.getElementById('view-charts').className = 'max-w-md mx-auto p-4 pb-24 view-hidden'; document.getElementById('view-detail').className = 'max-w-md mx-auto p-4 pb-24'; }
-    function toggleAcordeonMonitorizacion() { const acc = document.getElementById('monitor-accordion'); const arrow = document.getElementById('monitor-arrow'); if (acc.classList.contains('open')) { acc.classList.remove('open'); arrow.classList.remove('rotate-180'); } else { acc.classList.add('open'); arrow.classList.add('rotate-180'); } }
-    function dispararCargaImagen() { document.getElementById('image-picker').value = ""; document.getElementById('image-picker').click(); }
-
-    document.getElementById('image-picker').addEventListener('change', function(e) {
-      const file = e.target.files[0]; if (!file || !idSensorActivo) return;
-      const reader = new FileReader();
-      reader.onload = function(event) {
-        const img = new Image(); img.onload = function() {
-          const canvas = document.createElement('canvas'); const MAX_WIDTH = 500; let width = img.width; let height = img.height; if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
-          canvas.width = width; canvas.height = height; const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, width, height);
-          const compressedBase64 = canvas.toDataURL('image/jpeg', 0.6); localStorage.setItem(`foto_${idSensorActivo}`, compressedBase64); establecerFotoPantalla(compressedBase64); cargarFotoEnTarjetaHome(idSensorActivo);
-        }; img.src = event.target.result;
-      }; reader.readAsDataURL(file);
-    });
-
-    function cargarFotoDeMemoria(idSensor) { const fotoGuardada = localStorage.getItem(`foto_${idSensor}`); if (fotoGuardada) establecerFotoPantalla(fotoGuardada); else { document.getElementById('plant-image-bg').style.backgroundImage = 'none'; document.getElementById('plant-image-placeholder').classList.remove('view-hidden'); } }
-    function cargarFotoEnTarjetaHome(idSensor) { const card = document.getElementById(`card-${idSensor}`); const overlay = document.getElementById(`overlay-${idSensor}`); const fotoGuardada = localStorage.getItem(`foto_${idSensor}`); if (card && fotoGuardada) { card.style.backgroundImage = `url('${fotoGuardada}')`; if (overlay) overlay.style.opacity = "0.85"; } else if (card) { card.style.backgroundImage = 'none'; if (overlay) overlay.style.opacity = "0"; } }
-    function establecerFotoPantalla(base64Str) { document.getElementById('plant-image-bg').style.backgroundImage = `url('${base64Str}')`; document.getElementById('plant-image-placeholder').classList.add('view-hidden'); }
-
-    window.addEventListener('DOMContentLoaded', () => {
-      cargarDatosMeteo();
-      document.getElementById('clima-header').addEventListener('click', () => {
-        const acc = document.getElementById('clima-accordion'); const arrow = document.getElementById('clima-arrow');
-        if (acc.classList.contains('open')) { acc.classList.remove('open'); arrow.classList.remove('rotate-180'); } 
-        else { acc.classList.add('open'); arrow.classList.add('rotate-180'); }
-      });
-    });
-  </script>
-</body>
-</html> 
+    window.addEventListener('DOMContentLoaded', () => { 
+      cargarDatosMeteo(); 
+      document.getElementById('clima-header').addEventListener('click', () => { 
+        const acc = document.getElementById('clima-accordion'); const arrow = document.getElementById('clima-arrow'); 
+        if (acc.classList.contains('open')) { acc.classList.remove('open'); arrow.classList.remove('rotate-180'); }  
+        else { acc.classList.add('open'); arrow.classList.add('rotate-180'); } 
+      }); 
+    }); 
+  </script> 
+</body> 
+</html>
