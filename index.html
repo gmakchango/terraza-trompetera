@@ -34,7 +34,7 @@
         <button onclick="dispararCargaImagenCarga()" class="h-7 w-7 bg-slate-800 text-slate-400 rounded-lg flex items-center justify-center border border-slate-700/50 text-xs shadow-sm cursor-pointer hover:bg-slate-700"><i class="fa-solid fa-plus"></i></button> 
         <div> 
           <h1 class="text-xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-200 uppercase">TERRAZA TROMPETERA</h1> 
-          <p class="text-xs text-slate-400 font-mono">v5.13.2 Sync Master</p> 
+          <p class="text-xs text-slate-400 font-mono">v5.13.3 MVP Production</p> 
         </div> 
       </div> 
       <span class="px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-sm font-mono">GITHUB LIVE</span> 
@@ -78,7 +78,7 @@
     <div class="mb-4"><h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest px-1 mb-3 tag-lbl">Macetas y Sustrato</h3></div> 
     <section class="space-y-4"> 
       <article id="card-al_jazz" class="relative bg-slate-800 border border-slate-700/60 rounded-2xl p-4 shadow-md overflow-hidden bg-cover bg-center card-ui"> 
-        <div class="absolute inset-0 bg-slate-900/80 z-0 card-overlay" id="overlay-al_jazz" onclick="abrirDetalle('al_jazz', 'AL JAZZ', 'bg-emerald-500')"></div> 
+        <div id="overlay-al_jazz" onclick="abrirDetalle('al_jazz', 'AL JAZZ', 'bg-emerald-500')" class="absolute inset-0 bg-slate-900/80 z-0 card-overlay cursor-pointer"></div> 
         <div class="relative z-10 pointer-events-none"> 
           <div class="flex justify-between items-center mb-1"> 
             <h4 class="text-base font-bold text-white tracking-tight flex items-center gap-2 title-ui">AL JAZZ</h4> 
@@ -92,11 +92,11 @@
             <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Fertilidad</span><span class="text-lg font-black text-white font-mono" id="al_jazz-fertility">--</span></div> 
           </div> 
         </div> 
-        <button onclick="event.stopPropagation(); idSensorActivo='al_jazz'; dispararCargaImagen();" class="absolute bottom-3 right-3 h-7 w-7 bg-slate-900/60 backdrop-blur-sm rounded-full text-white border border-white/10 text-xs flex items-center justify-center z-20 cursor-pointer hover:bg-slate-900"><i class="fa-solid fa-plus"></i></button>
+        <button onclick="event.stopPropagation(); idSensorActivo='al_jazz'; dispararCargaImagen();" class="absolute bottom-3 right-3 h-7 w-7 bg-slate-950/70 backdrop-blur-sm rounded-full text-white border border-white/20 text-xs flex items-center justify-center视觉 z-20 cursor-pointer hover:bg-slate-800"><i class="fa-solid fa-plus"></i></button>
       </article> 
 
       <article id="card-genin" class="relative bg-slate-800 border border-slate-700/60 rounded-2xl p-4 shadow-md overflow-hidden bg-cover bg-center card-ui"> 
-        <div class="absolute inset-0 bg-slate-900/80 z-0 card-overlay" id="overlay-genin" onclick="abrirDetalle('genin', 'GENÍN', 'bg-teal-500')"></div> 
+        <div id="overlay-genin" onclick="abrirDetalle('genin', 'GENÍN', 'bg-teal-500')" class="absolute inset-0 bg-slate-900/80 z-0 card-overlay cursor-pointer"></div> 
         <div class="relative z-10 pointer-events-none"> 
           <div class="flex justify-between items-center mb-1"> 
             <h4 class="text-base font-bold text-white tracking-tight flex items-center gap-2 title-ui">GENÍN</h4> 
@@ -110,11 +110,11 @@
             <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Fertilidad</span><span class="text-lg font-black text-white font-mono" id="genin-fertility">--</span></div> 
           </div> 
         </div> 
-        <button onclick="event.stopPropagation(); idSensorActivo='genin'; dispararCargaImagen();" class="absolute bottom-3 right-3 h-7 w-7 bg-slate-900/60 backdrop-blur-sm rounded-full text-white border border-white/10 text-xs flex items-center justify-center z-20 cursor-pointer hover:bg-slate-900"><i class="fa-solid fa-plus"></i></button>
+        <button onclick="event.stopPropagation(); idSensorActivo='genin'; dispararCargaImagen();" class="absolute bottom-3 right-3 h-7 w-7 bg-slate-950/70 backdrop-blur-sm rounded-full text-white border border-white/20 text-xs flex items-center justify-center z-20 cursor-pointer hover:bg-slate-800"><i class="fa-solid fa-plus"></i></button>
       </article> 
 
       <article id="card-plumbago" class="relative bg-slate-800 border border-slate-700/60 rounded-2xl p-4 shadow-md overflow-hidden bg-cover bg-center card-ui"> 
-        <div class="absolute inset-0 bg-slate-900/80 z-0 card-overlay" id="overlay-plumbago" onclick="abrirDetalle('plumbago', 'PLUMBAGO', 'bg-blue-500')"></div> 
+        <div id="overlay-plumbago" onclick="abrirDetalle('plumbago', 'PLUMBAGO', 'bg-blue-500')" class="absolute inset-0 bg-slate-900/80 z-0 card-overlay cursor-pointer"></div> 
         <div class="relative z-10 pointer-events-none"> 
           <div class="flex justify-between items-center mb-1"> 
             <h4 class="text-base font-bold text-white tracking-tight flex items-center gap-2 title-ui">PLUMBAGO</h4> 
@@ -128,7 +128,7 @@
             <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Fertilidad</span><span class="text-lg font-black text-white font-mono" id="plumbago-fertility">--</span></div> 
           </div> 
         </div> 
-        <button onclick="event.stopPropagation(); idSensorActivo='plumbago'; dispararCargaImagen();" class="absolute bottom-3 right-3 h-7 w-7 bg-slate-900/60 backdrop-blur-sm rounded-full text-white border border-white/10 text-xs flex items-center justify-center z-20 cursor-pointer hover:bg-slate-900"><i class="fa-solid fa-plus"></i></button>
+        <button onclick="event.stopPropagation(); idSensorActivo='plumbago'; dispararCargaImagen();" class="absolute bottom-3 right-3 h-7 w-7 bg-slate-950/70 backdrop-blur-sm rounded-full text-white border border-white/20 text-xs flex items-center justify-center z-20 cursor-pointer hover:bg-slate-800"><i class="fa-solid fa-plus"></i></button>
       </article> 
     </section> 
 
@@ -239,8 +239,8 @@
     let sensoresSeleccionados = []; let contextoOrigenEsClima = false; let filtroTiempoActivo = 'dia';  
     let plantaEnFocoParaUmbrales = null; let diccionarioRangosSheet2 = null; let visualLightMode = false; 
 
-    const SIMBOLOS_UNIDADES = { temperatura: "ºC", humedad: "%", fertilidad: " µS", lux: " Lux", bateria: "%" }; 
-    const COLORES_VARIABLES = { temperatura: { linea: "#ef4444" }, humedad: { linea: "#3b82f6" }, fertilidad: { linea: "#10b981" }, lux: { linea: "#eab308" }, bateria: { linea: "#f59e0b" } }; 
+    const SIMBOLOS_UNIDADES = { temperatura: "ºC", humedad: "%", fertilidad: " µS", lux: " Lux", battery: "%" }; 
+    const COLORES_VARIABLES = { temperatura: { linea: "#ef4444" }, humedad: { linea: "#3b82f6" }, fertilidad: { linea: "#10b981" }, lux: { linea: "#eab308" }, battery: { linea: "#f59e0b" } }; 
 
     const RANGOS_AGRICOLAS = { 
       al_jazz: { temperatura: { min: 18, max: 32 }, humedad: { min: 20, max: 45 }, fertilidad: { min: 250, max: 600 }, lux: { min: 800, max: 5000 } }, 
@@ -255,8 +255,6 @@
       const loader = document.getElementById('loading-screen'); 
       if (loader) { loader.classList.add('opacity-0'); setTimeout(() => loader.remove(), 500); } 
     } 
-
-    setTimeout(() => { forzarApagadoSpinner(); }, 1600);
 
     async function cargarDatosMeteo() { 
       try { 
@@ -349,7 +347,7 @@
     function abrirPantallaGrafica(variable) { 
       variableActiva = variable; filtroTiempoActivo = 'dia'; sensoresSeleccionados = [idSensorActivo]; plantaEnFocoParaUmbrales = idSensorActivo;  
       document.getElementById('chart-variable-title').innerText = variable.toUpperCase(); 
-      document.getElementById('view-detail').classList.add('view-hidden');  
+      document.getElementById('view-detail').classList.add('view-hidden'); 
       document.getElementById('view-charts').classList.remove('view-hidden'); 
       cambiarFiltroTiempo('dia'); 
     } 
@@ -638,38 +636,42 @@
       }; reader.readAsDataURL(file); 
     }); 
 
+    // 🛡️ CONTROL MULTIMEDIA BLINDADO CONTRA ELEMENTOS E IDs INEXISTENTES O TRANSPARENTES
     function cargarFotoDeMemoria(idSensor) { 
-      const fotoGuardada = localStorage.getItem(`foto_${idSensor}`) || (baseDatosCache && baseDatosCache.appConfig ? baseDatosCache.appConfig[`img_${idSensor}`] : null); 
-      if (fotoGuardada) establecerFotoPantalla(fotoGuardada); 
-      else { 
-        const bg = document.getElementById('plant-image-bg');
-        const placeholder = document.getElementById('plant-image-placeholder');
-        if (bg) bg.style.backgroundImage = 'none'; 
-        if (placeholder) placeholder.classList.remove('view-hidden'); 
-      } 
+      try {
+        const fotoGuardada = localStorage.getItem(`foto_${idSensor}`) || (baseDatosCache && baseDatosCache.appConfig ? baseDatosCache.appConfig[`img_${idSensor}`] : null); 
+        if (fotoGuardada) establecerFotoPantalla(fotoGuardada); 
+        else { 
+          const bg = document.getElementById('plant-image-bg');
+          const placeholder = document.getElementById('plant-image-placeholder');
+          if (bg) bg.style.backgroundImage = 'none'; 
+          if (placeholder) placeholder.classList.remove('view-hidden'); 
+        } 
+      } catch(e) {}
     } 
 
     function cargarFotoEnTarjetaHome(idSensor) { 
-      const card = document.getElementById(`card-${idSensor}`); 
-      const overlay = document.getElementById(`overlay-${idSensor}`); 
-      const fotoGuardada = localStorage.getItem(`foto_${idSensor}`) || (baseDatosCache && baseDatosCache.appConfig ? baseDatosCache.appConfig[`img_${idSensor}`] : null); 
-      if (card && fotoGuardada) { 
-        card.style.backgroundImage = `url('${fotoGuardada}')`; 
-        if (overlay) overlay.style.opacity = "0.85"; 
-      } else if (card) {
-        card.style.backgroundImage = 'none'; 
-        if (overlay) overlay.style.opacity = "0"; 
-      }
+      try {
+        const card = document.getElementById(`card-${idSensor}`); 
+        const overlay = document.getElementById('overlay-' + idSensor); 
+        const fotoGuardada = localStorage.getItem(`foto_${idSensor}`) || (baseDatosCache && baseDatosCache.appConfig ? baseDatosCache.appConfig[`img_${idSensor}`] : null); 
+        if (card && fotoGuardada) { 
+          card.style.backgroundImage = `url('${fotoGuardada}')`; 
+          if (overlay) overlay.style.opacity = "0.45"; // Reduce opacidad de fondo de forma segura
+        } else if (card) {
+          card.style.backgroundImage = 'none'; 
+          if (overlay) overlay.style.opacity = "0.85"; 
+        }
+      } catch(e) {}
     } 
 
-    // 🛡️ REGLA MULTIMEDIA RECONSTRUIDA: Inyecta el Base64 de forma persistente en el DOM
     function establecerFotoPantalla(base64Str) { 
-      const bg = document.getElementById('plant-image-bg');
-      const placeholder = document.getElementById('plant-image-placeholder');
-      if (bg) {
-        bg.style.backgroundImage = `url('${base64Str}')`; 
-      }
-      if (placeholder) placeholder.classList.add('view-hidden'); 
+      try {
+        const bg = document.getElementById('plant-image-bg');
+        const placeholder = document.getElementById('plant-image-placeholder');
+        if (bg) { bg.style.backgroundImage = `url('${base64Str}')`; }
+        if (placeholder) placeholder.classList.add('view-hidden'); 
+      } catch(e) {}
     } 
 
     window.addEventListener('DOMContentLoaded', () => { 
