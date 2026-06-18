@@ -31,10 +31,10 @@
   <div id="view-home" class="max-w-md mx-auto p-4 pb-24"> 
     <header class="flex justify-between items-center mb-6 pt-2"> 
       <div class="flex items-center gap-2"> 
-        <button onclick="dispararCargaImagenCarga()" class="h-7 w-7 bg-slate-800 text-slate-400 rounded-lg flex items-center justify-center border border-slate-700/50 text-xs shadow-sm"><i class="fa-solid fa-plus"></i></button> 
+        <button onclick="dispararCargaImagenCarga()" class="h-7 w-7 bg-slate-800 text-slate-400 rounded-lg flex items-center justify-center border border-slate-700/50 text-xs shadow-sm cursor-pointer hover:bg-slate-700"><i class="fa-solid fa-plus"></i></button> 
         <div> 
           <h1 class="text-xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-200 uppercase">TERRAZA TROMPETERA</h1> 
-          <p class="text-xs text-slate-400 font-mono">v5.13.0 MVP Pro</p> 
+          <p class="text-xs text-slate-400 font-mono">v5.13.1 Multimedia Stream</p> 
         </div> 
       </div> 
       <span class="px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-sm font-mono">GITHUB LIVE</span> 
@@ -151,7 +151,7 @@
         <i class="fa-solid fa-seedling text-6xl mb-2"></i>
         <p class="text-xs font-medium tracking-wide">SIN FOTO ASIGNADA</p>
       </div>
-      <button onclick="dispararCargaImagen()" class="absolute top-4 right-4 h-10 w-10 bg-slate-900/60 backdrop-blur-md rounded-full text-white text-lg flex items-center justify-center shadow-lg"><i class="fa-solid fa-plus"></i></button>
+      <button onclick="dispararCargaImagen()" class="absolute top-4 right-4 h-10 w-10 bg-slate-900/60 backdrop-blur-md rounded-full text-white text-lg flex items-center justify-center shadow-lg cursor-pointer hover:bg-slate-900/80"><i class="fa-solid fa-plus"></i></button>
 
       <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-slate-900 via-slate-900/70 to-transparent pt-12 z-10">
         <div class="grid grid-cols-2 gap-2">
@@ -202,7 +202,7 @@
       <button onclick="volverADetalle()" class="p-2.5 bg-slate-800 rounded-xl text-slate-400 back-btn"><i class="fa-solid fa-chevron-left text-sm"></i></button> 
       <div> 
         <h1 class="text-xl font-black text-white uppercase title-ui" id="chart-variable-title">VARIABLE</h1> 
-        <p class="text-xs text-slate-400 font-mono">Cursor Magnético Real-Time</p> 
+        <p class="text-xs text-slate-400 font-mono">Cursor Magnético de Punto Único</p> 
       </div> 
     </header> 
 
@@ -253,14 +253,14 @@
       if (loader) { loader.classList.add('opacity-0'); setTimeout(() => loader.remove(), 500); } 
     } 
 
-    // Guard preventivo síncrono natural para estabilización
+    // Guard síncrono de inicialización limpia
     setTimeout(() => { forzarApagadoSpinner(); }, 1600);
 
     async function cargarDatosMeteo() { 
       try { 
         const respuesta = await fetch(`${API_URL}?_cb=${new Date().getTime()}`); 
         baseDatosCache = await respuesta.json(); 
-        if (!baseDatosCache || !baseDatosCache.success) throw new Error("Sheets Network Disconnected"); 
+        if (!baseDatosCache || !baseDatosCache.success) throw new Error("Sheets API Timeout"); 
         diccionarioRangosSheet2 = baseDatosCache.rangosSheet2; 
 
         if (baseDatosCache.appConfig) { 
@@ -311,7 +311,6 @@
       document.getElementById('input-sub-libre').value = fallbackTexto; 
       actualizarValoresPantallaDetalle(); cargarFotoDeMemoria(idSensorActivo); 
       
-      // 🛡️ PILAR 3: Navegación nativa segura contra excepciones de Safari
       document.getElementById('view-home').classList.add('view-hidden'); 
       document.getElementById('view-detail').classList.remove('view-hidden'); 
       window.scrollTo(0, 0); 
@@ -344,25 +343,7 @@
       fetch(API_URL, { method: "POST", body: JSON.stringify({ clave: `txt_${idSensorActivo}`, valor: txt }) }).catch(e => console.error(e)); 
     } 
 
-    function dispararCargaImagenCarga() { document.getElementById('bg-picker-global').value = ""; document.getElementById('bg-picker-global').click(); } 
-
-    document.getElementById('bg-picker-global').addEventListener('change', function(e) { 
-      const file = e.target.files[0]; if (!file) return; 
-      const reader = new FileReader(); 
-      reader.onload = function(event) { 
-        const img = new Image(); img.onload = function() { 
-          const canvas = document.createElement('canvas'); const MAX_WIDTH = 400; let width = img.width; let height = img.height; 
-          if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; } 
-          canvas.width = width; canvas.height = height; const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, width, height); 
-          const compressedBase64 = canvas.toDataURL('image/jpeg', 0.4); 
-          fetch(API_URL, { method: "POST", body: JSON.stringify({ clave: "img_loading", valor: compressedBase64 }) }).then(r => r.json()).then(res => { if(res.success) alert("Pantalla de inicio compartida."); }); 
-        }; img.src = event.target.result; 
-      }; reader.readAsDataURL(file); 
-    }); 
-
-    function browseGraficaCustom(varSpan) {
-      abrirPantallaGrafica(varSpan);
-    }
+    function browseGraficaCustom(varSpan) { abrirPantallaGrafica(varSpan); }
 
     function abrirPantallaGrafica(variable) { 
       variableActiva = variable; filtroTiempoActivo = 'dia'; sensoresSeleccionados = [idSensorActivo]; plantaEnFocoParaUmbrales = idSensorActivo;  
@@ -397,14 +378,12 @@
       renderizarPildorasSelectoras(); construirGraficoAnalitico(); 
     } 
 
-    // 🛡️ PILAR 1: MOTOR ANALÍTICO INTEGRAL v5.9.4 CON CORTE DE TIEMPO REAL HOY ES HOY SANEADO
+    // 🛡️ MOTOR DE HISTÓRICO v5.9.4 CON CORTE DE LÍNEA ESTRICTO EN LA HORA ACTUAL REAL
     function construirGraficoAnalitico() { 
       const ctx = document.getElementById('canvas-chart-js').getContext('2d'); if (miGraficoChartJS) miGraficoChartJS.destroy(); 
       const unidadMedida = SIMBOLOS_UNIDADES[variableActiva] || ""; const configuracionColor = COLORES_VARIABLES[variableActiva]; 
 
-      let etiquetasEjeX = []; 
-      let mapeoDatosEstructurado = {}; 
-      let hoy = new Date();
+      let etiquetasEjeX = []; let mapeoDatosEstructurado = {}; let hoy = new Date();
 
       if (filtroTiempoActivo === 'dia') { 
         for (let h = 0; h <= 24; h++) { etiquetasEjeX.push((h < 10 ? '0'+h : h) + ':00'); } 
@@ -421,18 +400,13 @@
         const registros = baseDatosCache.dbHistorico; 
           
         if (filtroTiempoActivo === 'dia') { 
-          let acumuladorPorHora = {}; 
-          let ultimaHoraConDatos = -1; 
+          let acumuladorPorHora = {}; let ultimaHoraConDatos = -1; 
             
           registros.forEach(nodo => { 
-            let f = new Date(nodo.f); 
-            if (isNaN(f.getTime())) return;  
-            
-            // Filtro estricto temporal: Solo el día de hoy califica para calcular el corte de la noche
+            let f = new Date(nodo.f); if (isNaN(f.getTime())) return;  
             if (f.getDate() !== hoy.getDate() || f.getMonth() !== hoy.getMonth() || f.getFullYear() !== hoy.getFullYear()) return;
 
-            let h = f.getHours(); 
-            if (!acumuladorPorHora[h]) acumuladorPorHora[h] = {}; 
+            let h = f.getHours(); if (!acumuladorPorHora[h]) acumuladorPorHora[h] = {}; 
               
             sensoresSeleccionados.forEach(id => { 
               if (!acumuladorPorHora[h][id]) acumuladorPorHora[h][id] = []; 
@@ -441,7 +415,6 @@
               if (variableActiva === 'bateria') val = nodo[id].battery; 
               else if (variableActiva === 'humedad') val = nodo[id].moisture !== undefined ? nodo[id].moisture : nodo[id].hum; 
               else if (variableActiva === 'temperatura') {
-                // Sincronización robusta: Lee .temp directo de macetas o extrae del clima ambiente indexado
                 val = nodo[id].temp !== undefined ? nodo[id].temp : (nodo[id].uci_temp || nodo[id].secadero_temp || nodo[id].fontana_temp || baseDatosCache.clima[`${id}_temp`]);
               } else val = nodo[id][variableActiva]; 
                 
@@ -453,26 +426,23 @@
           }); 
 
           for (let h = 0; h <= 24; h++) { 
-            if (h > ultimaHoraConDatos) break; // 🛡️ CORTE EN SECO: Deja las 22:00h vacías sin inventar promedios
+            if (h > ultimaHoraConDatos) break; 
             if (acumuladorPorHora[h]) { 
               sensoresSeleccionados.forEach(id => { 
                 let listado = acumuladorPorHora[h][id] || []; 
                 if (listado.length > 0) { 
                   let prom = listado.reduce((a,b)=>a+b, 0) / listado.length; 
                   let finalVal = Math.ceil(prom * 100) / 100; 
-                  mapeoDatosEstructurado[id][h] = finalVal; 
-                  totalPuntosEnCanvas.push(finalVal); 
+                  mapeoDatosEstructurado[id][h] = finalVal; totalPuntosEnCanvas.push(finalVal); 
                 } 
               }); 
             } 
           } 
         } else if (filtroTiempoActivo === 'mes') { 
-          let acumuladorPorDia = {}; 
-          let ultimoDiaConDatos = -1; 
+          let acumuladorPorDia = {}; let ultimoDiaConDatos = -1; 
             
           registros.forEach(nodo => { 
-            let f = new Date(nodo.f); 
-            if (isNaN(f.getTime()) || f.getMonth() !== 5) return;  
+            let f = new Date(nodo.f); if (isNaN(f.getTime()) || f.getMonth() !== 5) return;  
             let d = f.getDate(); 
               
             if (!acumuladorPorDia[d]) acumuladorPorDia[d] = {}; 
@@ -500,21 +470,17 @@
                 if (listado.length > 0) { 
                   let prom = listado.reduce((a,b)=>a+b, 0) / listado.length; 
                   let finalVal = Math.ceil(prom * 100) / 100; 
-                  mapeoDatosEstructurado[id][d - 1] = finalVal; 
-                  totalPuntosEnCanvas.push(finalVal); 
+                  mapeoDatosEstructurado[id][d - 1] = finalVal; totalPuntosEnCanvas.push(finalVal); 
                 } 
               }); 
             } 
           } 
         } else { 
-          let acumuladorPorMes = {}; 
-          let ultimoMesConDatos = 0; 
+          let acumuladorPorMes = {}; let ultimoMesConDatos = 0; 
 
           registros.forEach(nodo => { 
-            let f = new Date(nodo.f); 
-            if (isNaN(f.getTime())) return; 
-            let mIdx = f.getMonth(); 
-            let xPos = (mIdx >= 5) ? (mIdx - 5) : (mIdx + 7); 
+            let f = new Date(nodo.f); if (isNaN(f.getTime())) return; 
+            let mIdx = f.getMonth(); let xPos = (mIdx >= 5) ? (mIdx - 5) : (mIdx + 7); 
               
             if (!acumuladorPorMes[xPos]) acumuladorPorMes[xPos] = {}; 
             sensoresSeleccionados.forEach(id => { 
@@ -541,8 +507,7 @@
                 if (listado.length > 0) { 
                   let prom = listado.reduce((a,b)=>a+b, 0) / listado.length; 
                   let finalVal = Math.ceil(prom * 100) / 100; 
-                  mapeoDatosEstructurado[id][m] = finalVal; 
-                  totalPuntosEnCanvas.push(finalVal); 
+                  mapeoDatosEstructurado[id][m] = finalVal; totalPuntosEnCanvas.push(finalVal); 
                 } 
               }); 
             } 
@@ -578,7 +543,7 @@
         }; 
       }); 
 
-      let finalMinY = 0; // 🛡️ ORIGEN DEL EJE VERTICAL CLAVADO EN 0 EN TODAS LAS VISTAS
+      let finalMinY = 0; 
       let finalMaxY = (variableActiva === 'humedad' || variableActiva === 'bateria') ? 100 : rango.max; 
 
       if (totalPuntosEnCanvas.length > 0 && variableActiva !== 'humedad' && variableActiva !== 'bateria') { 
@@ -649,7 +614,7 @@
     function dispararCargaImagen() { document.getElementById('image-picker').value = ""; document.getElementById('image-picker').click(); } 
     function dispararCargaImagenCarga() { document.getElementById('bg-picker-global').value = ""; document.getElementById('bg-picker-global').click(); } 
 
-    // 🛡专题 PILAR 2: CARGADOR COMPRIMIDO CON FETCH POST SINCRONIZADO HACIA LA NUBE
+    // 🛡️ PILAR 2: CANVAS DE COMPRESIÓN CON PERSISTENCIA POST DESTINO GOOGLE SHEETS
     document.getElementById('image-picker').addEventListener('change', function(e) { 
       const file = e.target.files[0]; if (!file || !idSensorActivo) return; 
       const reader = new FileReader(); 
@@ -659,29 +624,30 @@
           if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; } 
           canvas.width = width; canvas.height = height; const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, width, height); 
           
-          const compressedBase64 = canvas.toDataURL('image/jpeg', 0.5); // Comprime al 50%
+          const compressedBase64 = canvas.toDataURL('image/jpeg', 0.5); 
           localStorage.setItem(`foto_${idSensorActivo}`, compressedBase64); 
           establecerFotoPantalla(compressedBase64); 
           cargarFotoEnTarjetaHome(idSensorActivo); 
           
-          // Transmisión inmediata de la imagen a tu pestaña Config_App
           fetch(API_URL, { method: "POST", body: JSON.stringify({ clave: `img_${idSensorActivo}`, valor: compressedBase64 }) })
-            .catch(err => console.error("Error persistencia imagen cloud:", err));
+            .catch(err => console.error("Cloud post failed:", err));
             
         }; img.src = event.target.result; 
       }; reader.readAsDataURL(file); 
     }); 
 
-    // 🛡️ PILAR 3: Cuerpo de funciones restaurado por completo para renderizado local de fotos
+    // 🛡️ PILAR 3: RENDERIZACIÓN VISUAL DE BASE64 RESTAURADA AL COMPLETÓ
     function cargarFotoDeMemoria(idSensor) { 
       const fotoGuardada = localStorage.getItem(`foto_${idSensor}`) || (baseDatosCache && baseDatosCache.appConfig ? baseDatosCache.appConfig[`img_${idSensor}`] : null); 
       if (fotoGuardada) establecerFotoPantalla(fotoGuardada); 
       else { 
-        document.getElementById('plant-image-bg').style.backgroundImage = 'none'; 
-        document.getElementById('plant-image-placeholder').classList.remove('view-hidden'); 
+        const bg = document.getElementById('plant-image-bg');
+        const placeholder = document.getElementById('plant-image-placeholder');
+        if (bg) bg.style.backgroundImage = 'none'; 
+        if (placeholder) placeholder.classList.remove('view-hidden'); 
       } 
     } 
-    
+
     function cargarFotoEnTarjetaHome(idSensor) { 
       const card = document.getElementById(`card-${idSensor}`); 
       const overlay = document.getElementById(`overlay-${idSensor}`); 
@@ -689,16 +655,19 @@
       if (card && fotoGuardada) { 
         card.style.backgroundImage = `url('${fotoGuardada}')`; 
         if (overlay) overlay.style.opacity = "0.85"; 
-      } else if (card) { 
+      } else if (card) {
         card.style.backgroundImage = 'none'; 
         if (overlay) overlay.style.opacity = "0"; 
-      } 
+      }
     } 
-    
+
     function establecerFotoPantalla(base64Str) { 
       const bg = document.getElementById('plant-image-bg');
       const placeholder = document.getElementById('plant-image-placeholder');
-      if (bg) bg.style.backgroundImage = `url('${base64Str}')`; 
+      if (bg) {
+        bg.classList.remove('hidden');
+        bg.style.backgroundImage = `url('${base64Str}')`; 
+      }
       if (placeholder) placeholder.classList.add('view-hidden'); 
     } 
 
