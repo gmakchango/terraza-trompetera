@@ -25,14 +25,11 @@
     </div>
   </div>
 
-  <input type="file" id="image-picker" accept="image/*" class="hidden">
-  <input type="file" id="bg-picker-global" accept="image/*" class="hidden">
-
   <div id="view-home" class="max-w-md mx-auto p-4 pb-24">
     <header class="flex justify-between items-center mb-6 pt-2">
       <div>
         <h1 class="text-xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-200 uppercase">TERRAZA TROMPETERA</h1>
-        <p class="text-xs text-slate-400 font-mono">v5.10.3 Core Certified</p>
+        <p class="text-xs text-slate-400 font-mono">v5.11 Strict Analytics</p>
       </div>
       <span class="px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-sm font-mono">GITHUB LIVE</span>
     </header>
@@ -233,7 +230,7 @@
     let sensoresSeleccionados = []; let contextoOrigenEsClima = false; let filtroTiempoActivo = 'dia'; 
     let plantaEnFocoParaUmbrales = null; let diccionarioRangosSheet2 = null; let visualLightMode = false;
 
-    // 🛡️ ENRUTAMIENTO ESTRICTO EN INGLÉS CONTRA EL SERVIDOR
+    // 🛡️ ENRUTAMIENTO ESTRICTO: Mapeo nativo limpio libre de colisiones tipográficas
     const SIMBOLOS_UNIDADES = { temp: "ºC", moisture: "%", humidity: "%", fertility: " µS", lux: " Lux", battery: "%" };
     const COLORES_VARIABLES = { temp: { linea: "#ef4444" }, moisture: { linea: "#3b82f6" }, humidity: { linea: "#3b82f6" }, fertility: { linea: "#10b981" }, lux: { linea: "#eab308" }, battery: { linea: "#f59e0b" } };
 
@@ -248,14 +245,14 @@
 
     function forzarApagadoSpinner() {
       const loader = document.getElementById('loading-screen');
-      if (loader) { loader.classList.add('opacity-0'); setTimeout(() => loader.remove(), 500); }
+      if (loader) { loader.classList.add('opacity-0'); setTimeout(() => loader.remove(), 300); }
     }
 
     async function cargarDatosMeteo() {
       try {
         const respuesta = await fetch(`${API_URL}?_cb=${new Date().getTime()}`);
         baseDatosCache = await respuesta.json();
-        if (!baseDatosCache.success) throw new Error("API Data Error");
+        if (!baseDatosCache || !baseDatosCache.success) throw new Error("API Data Error");
         diccionarioRangosSheet2 = baseDatosCache.rangosSheet2;
 
         if (baseDatosCache.appConfig) {
@@ -305,36 +302,42 @@
       let fallbackTexto = baseDatosCache && baseDatosCache.appConfig ? (baseDatosCache.appConfig[`txt_${idSensorActivo}`] || "Ficha Técnica en Vivo") : "Ficha Técnica en Vivo";
       document.getElementById('input-sub-libre').value = fallbackTexto;
       actualizarValoresPantallaDetalle(); cargarFotoDeMemoria(idSensorActivo);
+      
       document.getElementById('view-home').classList.add('view-hidden'); 
       document.getElementById('view-detail').classList.remove('view-hidden');
       window.scrollTo(0, 0);
     }
 
+    // 🛡️ HIDRATACIÓN FAIL-SAFE: Protegida contra elementos eliminados del HTML en climas
     function actualizarValoresPantallaDetalle() {
       try {
         if (!baseDatosCache || !idSensorActivo) return;
         const esClima = ['uci', 'secadero', 'fontana'].includes(idSensorActivo);
+        
+        let humEl = document.getElementById('detail-moisture');
+        let tempEl = document.getElementById('detail-temp');
+        
         if (esClima) {
-          document.getElementById('detail-moisture').innerText = baseDatosCache.clima[`${idSensorActivo}_hum`] + "%";
-          document.getElementById('detail-temp').innerText = baseDatosCache.clima[`${idSensorActivo}_temp`] + "°C";
+          if(humEl) humEl.innerText = baseDatosCache.clima[`${idSensorActivo}_hum`] + "%";
+          if(tempEl) tempEl.innerText = baseDatosCache.clima[`${idSensorActivo}_temp`] + "°C";
           if (document.getElementById('detail-lux')) document.getElementById('detail-lux').innerText = "-- Lux"; 
           if (document.getElementById('detail-fertility')) document.getElementById('detail-fertility').innerHTML = "--";
           if (document.getElementById('detail-battery-lbl')) document.getElementById('detail-battery-lbl').innerText = "99";
         } else {
           const sensor = baseDatosCache[idSensorActivo];
-          document.getElementById('detail-moisture').innerText = sensor.moisture + "%";
-          document.getElementById('detail-temp').innerText = sensor.temp + "°C";
+          if(humEl) humEl.innerText = sensor.moisture + "%";
+          if(tempEl) tempEl.innerText = sensor.temp + "°C";
           if (document.getElementById('detail-lux')) document.getElementById('detail-lux').innerText = sensor.lux.toLocaleString('es-ES') + " Lux";
           if (document.getElementById('detail-fertility')) document.getElementById('detail-fertility').innerHTML = sensor.fertility + ' <span class="text-[10px] font-normal opacity-60">µS</span>';
           if (document.getElementById('detail-battery-lbl')) document.getElementById('detail-battery-lbl').innerText = sensor.battery;
         }
-      } catch(e) { console.error(e); }
+      } catch(e) { console.error("DOM Protected:", e); }
     }
 
     function abrirPantallaGrafica(variable) {
       variableActiva = variable; filtroTiempoActivo = 'dia'; sensoresSeleccionados = [idSensorActivo]; plantaEnFocoParaUmbrales = idSensorActivo; 
       
-      let titMap = { temp: "TEMPERATURA", moisture: "HUMEDAD SUSTRATO", humidity: "HUMEDAD AMBIENTE", fertility: "FERTILIDAD", lux: "LUMINOSIDAD (LUX)", battery: "SALUD BATERÍA" };
+      let titMap = { temp: "TEMPERATURA", moisture: "HUMEDAD", humidity: "HUMEDAD AMBIENTE", fertility: "FERTILIDAD", lux: "LUMINOSIDAD (LUX)", battery: "SALUD BATERÍA" };
       document.getElementById('chart-variable-title').innerText = titMap[variable] || variable.toUpperCase();
       
       document.getElementById('view-detail').classList.add('view-hidden'); 
@@ -367,12 +370,13 @@
       renderizarPildorasSelectoras(); construirGraficoAnalitico();
     }
 
-    // 🛡️ MOTOR DE COBERTURA INTEGRAL DE 3 CAPAS (Sincroniza temp en todas las pantallas)
+    // 🛡️ MOTOR GRÁFICO MAESTRO SANEADO v5.11 (Resuelve Climas y Fecha de Hoy Estricta)
     function construirGraficoAnalitico() {
       const ctx = document.getElementById('canvas-chart-js').getContext('2d'); if (miGraficoChartJS) miGraficoChartJS.destroy();
       const unidadMedida = SIMBOLOS_UNIDADES[variableActiva] || ""; const configuracionColor = COLORES_VARIABLES[variableActiva];
 
       let etiquetasEjeX = []; let mapeoDatosEstructurado = {};
+      let hoy = new Date();
 
       if (filtroTiempoActivo === 'dia') {
         for (let h = 0; h <= 24; h++) { etiquetasEjeX.push((h < 10 ? '0'+h : h) + ':00'); }
@@ -390,14 +394,22 @@
         
         if (filtroTiempoActivo === 'dia') {
           let acumuladorPorHora = {}; let ultimaHoraConDatos = -1;
+          
           registros.forEach(nodo => {
             let f = new Date(nodo.f); if (isNaN(f.getTime())) return; 
+            
+            // 🛡️ FILTRO REGLA DE ORO: Evita arrastrar las 22:00h de días pasados. Hoy es hoy.
+            if (f.getDate() !== hoy.getDate() || f.getMonth() !== hoy.getMonth() || f.getFullYear() !== hoy.getFullYear()) return;
+            
             let h = f.getHours(); if (!acumuladorPorHora[h]) acumuladorPorHora[h] = {};
             
             sensoresSeleccionados.forEach(id => {
               if (!acumuladorPorHora[h][id]) acumuladorPorHora[h][id] = [];
+              
+              // Normalización de claves para soportar Macetas (.temp) y Climas (.temp) unificados
               let targetKey = variableActiva;
               if (targetKey === 'moisture' && nodo[id].moisture === undefined) targetKey = 'hum';
+              if (targetKey === 'humidity') targetKey = 'hum';
               
               let rawVal = nodo[id][targetKey];
               let val = (rawVal !== null && rawVal !== undefined && !isNaN(Number(rawVal))) ? Number(rawVal) : null;
@@ -410,7 +422,7 @@
           });
 
           for (let h = 0; h <= 24; h++) {
-            if (h > ultimaHoraConDatos) break; 
+            if (h > ultimaHoraConDatos) break; // 🛡️ CORTE RADICAL: Detiene la línea en seco en las 18:00h
             if (acumuladorPorHora[h]) {
               sensoresSeleccionados.forEach(id => {
                 let listado = acumuladorPorHora[h][id] || [];
@@ -430,8 +442,10 @@
             
             sensoresSeleccionados.forEach(id => {
               if (!acumuladorPorDia[d][id]) acumuladorPorDia[d][id] = [];
+              
               let targetKey = variableActiva;
               if (targetKey === 'moisture' && nodo[id].moisture === undefined) targetKey = 'hum';
+              if (targetKey === 'humidity') targetKey = 'hum';
               
               let rawVal = nodo[id][targetKey];
               let val = (rawVal !== null && rawVal !== undefined && !isNaN(Number(rawVal))) ? Number(rawVal) : null;
@@ -465,8 +479,10 @@
             
             sensoresSeleccionados.forEach(id => {
               if (!acumuladorPorMes[xPos][id]) acumuladorPorMes[xPos][id] = [];
+              
               let targetKey = variableActiva;
               if (targetKey === 'moisture' && nodo[id].moisture === undefined) targetKey = 'hum';
+              if (targetKey === 'humidity') targetKey = 'hum';
               
               let rawVal = nodo[id][targetKey];
               let val = (rawVal !== null && rawVal !== undefined && !isNaN(Number(rawVal))) ? Number(rawVal) : null;
@@ -494,33 +510,22 @@
         }
       }
 
-      let rango = { min: 0, max: 100 };
-      try {
-        const plantaKeyLimpia = plantaEnFocoParaUmbrales ? plantaEnFocoParaUmbrales.toLowerCase().trim() : '';
-        const varKeyLimpia = variableActiva ? variableActiva.toLowerCase().trim() : '';
-        if (diccionarioRangosSheet2 && diccionarioRangosSheet2[plantaKeyLimpia] && diccionarioRangosSheet2[plantaKeyLimpia][varKeyLimpia]) {
-          rango = { min: Number(diccionarioRangosSheet2[plantaKeyLimpia][varKeyLimpia].min), max: Number(diccionarioRangosSheet2[plantaKeyLimpia][varKeyLimpia].max) };
-        } else {
-          rango = (RANGOS_AGRICOLAS[plantaEnFocoParaUmbrales] || {})[variableActiva] || { min: 0, max: 50 };
-        }
-      } catch (err) { rango = { min: 0, max: 50 }; }
-
       const datasetsLineas = sensoresSeleccionados.map(id => {
         const esLiderActual = id === plantaEnFocoParaUmbrales;
         return {
           label: id.replace('_', ' ').toUpperCase(), data: mapeoDatosEstructurado[id],
-          borderColor: configuracionColor.linea,
-          backgroundColor: `rgba(${parseInt(configuracionColor.linea.slice(1,3),16)},${parseInt(configuracionColor.linea.slice(3,5),16)},${parseInt(configuracionColor.linea.slice(5,7),16)},${esLiderActual ? '0.04':'0.01'})`,
-          borderWidth: esLiderActual ? 3 : 1.5, fill: true, tension: 0.20, pointRadius: function(context) {
+          borderColor: configuracionColor.linea, backgroundColor: 'transparent',
+          borderWidth: esLiderActual ? 3 : 1.5, fill: false, tension: 0.15,
+          pointRadius: function(context) {
             let dataset = context.dataset.data; let idxUltimoDato = -1;
             for(let i=0; i<dataset.length; i++) { if(dataset[i] !== null) idxUltimoDato = i; }
             return context.dataIndex === idxUltimoDato ? 5 : (filtroTiempoActivo === 'dia' ? 0 : 3);
           },
-          pointHitRadius: 25, spanGaps: false
+          spanGaps: false
         };
       });
 
-      let finalMinY = 0; // 🛡️ ORIGEN DEL EJE VERTICAL CLAVADO EN 0 ABSOLUTO
+      let finalMinY = 0; 
       let esPorcentaje = variableActiva === 'moisture' || variableActiva === 'humidity' || variableActiva === 'battery';
       let finalMaxY = esPorcentaje ? 100 : rango.max;
 
@@ -581,27 +586,19 @@
       if(miGraficoChartJS) construirGraficoAnalitico();
     }
 
+    async function salvarTextoFichaNube() {
+      const txt = document.getElementById('input-sub-libre').value;
+      if(baseDatosCache && baseDatosCache.appConfig) baseDatosCache.appConfig[`txt_${idSensorActivo}`] = txt;
+      let elHome = document.getElementById(`lbl-${idSensorActivo}-sub`); if (elHome) elHome.innerText = txt;
+      fetch(API_URL, { method: "POST", body: JSON.stringify({ clave: `txt_${idSensorActivo}`, valor: txt }) }).catch(e => console.error(e));
+    }
+
     function cambiarFiltroTiempo(filtro) { filtroTiempoActivo = filtro; ['dia', 'mes', 'ano'].forEach(f => { const btn = document.getElementById(`btn-time-${f}`); if(btn) btn.className = f === filtro ? "py-2 rounded-lg text-xs font-bold bg-slate-700 text-white uppercase tracking-wider" : "py-2 rounded-lg text-xs font-medium text-slate-400 uppercase tracking-wider"; }); renderizarPildorasSelectoras(); construirGraficoAnalitico(); }
     function volverAHome() { idSensorActivo = null; document.getElementById('view-detail').className = 'max-w-md mx-auto p-4 pb-24 view-hidden'; document.getElementById('view-home').className = 'max-w-md mx-auto p-4 pb-24'; if(baseDatosCache) cargarDatosMeteo(); }
     function volverADetalle() { document.getElementById('view-charts').className = 'max-w-md mx-auto p-4 pb-24 view-hidden'; document.getElementById('view-detail').className = 'max-w-md mx-auto p-4 pb-24'; }
     function toggleAcordeonMonitorizacion() { const acc = document.getElementById('monitor-accordion'); const arrow = document.getElementById('monitor-arrow'); if (acc.classList.contains('open')) { acc.classList.remove('open'); arrow.classList.remove('rotate-180'); } else { acc.classList.add('open'); arrow.classList.add('rotate-180'); } }
     function dispararCargaImagen() { document.getElementById('image-picker').value = ""; document.getElementById('image-picker').click(); }
-
-    document.getElementById('image-picker').addEventListener('change', function(e) {
-      const file = e.target.files[0]; if (!file || !idSensorActivo) return;
-      const reader = new FileReader();
-      reader.onload = function(event) {
-        const img = new Image(); img.onload = function() {
-          const canvas = document.createElement('canvas'); const MAX_WIDTH = 500; let width = img.width; let height = img.height; if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
-          canvas.width = width; canvas.height = height; const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, width, height);
-          const compressedBase64 = canvas.toDataURL('image/jpeg', 0.6); localStorage.setItem(`foto_${idSensorActivo}`, compressedBase64); establecerFotoPantalla(compressedBase64); cargarFotoEnTarjetaHome(idSensorActivo);
-        }; img.src = event.target.result;
-      }; reader.readAsDataURL(file);
-    });
-
-    function cargarFotoDeMemoria(idSensor) { const fotoGuardada = localStorage.getItem(`foto_${idSensor}`); if (fotoGuardada) establecerFotoPantalla(fotoGuardada); else { document.getElementById('plant-image-bg').style.backgroundImage = 'none'; document.getElementById('plant-image-placeholder').classList.remove('view-hidden'); } }
-    function cargarFotoEnTarjetaHome(idSensor) { const card = document.getElementById(`card-${idSensor}`); const overlay = document.getElementById(`overlay-${idSensor}`); const fotoGuardada = localStorage.getItem(`foto_${idSensor}`); if (card && fotoGuardada) { card.style.backgroundImage = `url('${fotoGuardada}')`; if (overlay) overlay.style.opacity = "0.85"; } else if (card) { card.style.backgroundImage = 'none'; if (overlay) overlay.style.opacity = "0"; } }
-    function establecerFotoPantalla(base64Str) { document.getElementById('plant-image-bg').style.backgroundImage = `url('${base64Str}')`; document.getElementById('plant-image-placeholder').classList.add('view-hidden'); }
+    function dispararCargaImagenCarga() { document.getElementById('bg-picker-global').value = ""; document.getElementById('bg-picker-global').click(); }
 
     window.addEventListener('DOMContentLoaded', () => {
       cargarDatosMeteo();
