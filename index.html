@@ -34,7 +34,7 @@
         <button onclick="dispararCargaImagenCarga()" class="h-7 w-7 bg-slate-800 text-slate-400 rounded-lg flex items-center justify-center border border-slate-700/50 text-xs shadow-sm cursor-pointer hover:bg-slate-700"><i class="fa-solid fa-plus"></i></button> 
         <div> 
           <h1 class="text-xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-200 uppercase">TERRAZA TROMPETERA</h1> 
-          <p class="text-xs text-slate-400 font-mono">v5.13.1 Multimedia Stream</p> 
+          <p class="text-xs text-slate-400 font-mono">v5.13.2 Sync Master</p> 
         </div> 
       </div> 
       <span class="px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-sm font-mono">GITHUB LIVE</span> 
@@ -77,55 +77,58 @@
 
     <div class="mb-4"><h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest px-1 mb-3 tag-lbl">Macetas y Sustrato</h3></div> 
     <section class="space-y-4"> 
-      <article onclick="abrirDetalle('al_jazz', 'AL JAZZ', 'bg-emerald-500')" id="card-al_jazz" class="relative bg-slate-800 border border-slate-700/60 rounded-2xl p-4 shadow-md overflow-hidden bg-cover bg-center card-ui cursor-pointer"> 
-        <div class="absolute inset-0 bg-slate-900/80 z-0 card-overlay" id="overlay-al_jazz"></div> 
-        <div class="relative z-10"> 
+      <article id="card-al_jazz" class="relative bg-slate-800 border border-slate-700/60 rounded-2xl p-4 shadow-md overflow-hidden bg-cover bg-center card-ui"> 
+        <div class="absolute inset-0 bg-slate-900/80 z-0 card-overlay" id="overlay-al_jazz" onclick="abrirDetalle('al_jazz', 'AL JAZZ', 'bg-emerald-500')"></div> 
+        <div class="relative z-10 pointer-events-none"> 
           <div class="flex justify-between items-center mb-1"> 
             <h4 class="text-base font-bold text-white tracking-tight flex items-center gap-2 title-ui">AL JAZZ</h4> 
             <span class="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/10 batt-ui"><span id="al_jazz-battery">--</span>%</span> 
           </div> 
           <p id="lbl-al_jazz-sub" class="text-[11px] text-slate-400 font-medium mb-3 sub-ui italic standard-sub">Ficha Técnica en Vivo</p> 
-          <div class="grid grid-cols-2 gap-3"> 
+          <div class="grid grid-cols-2 gap-3 mb-1"> 
             <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Hum. Suelo</span><span class="text-lg font-black text-white font-mono" id="al_jazz-moisture">--%</span></div> 
             <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Temp. Suelo</span><span class="text-lg font-black text-white font-mono" id="al_jazz-temp">--°C</span></div> 
             <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Luz</span><span class="text-lg font-black text-white font-mono" id="al_jazz-lux">--</span></div> 
             <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Fertilidad</span><span class="text-lg font-black text-white font-mono" id="al_jazz-fertility">--</span></div> 
           </div> 
         </div> 
+        <button onclick="event.stopPropagation(); idSensorActivo='al_jazz'; dispararCargaImagen();" class="absolute bottom-3 right-3 h-7 w-7 bg-slate-900/60 backdrop-blur-sm rounded-full text-white border border-white/10 text-xs flex items-center justify-center z-20 cursor-pointer hover:bg-slate-900"><i class="fa-solid fa-plus"></i></button>
       </article> 
 
-      <article onclick="abrirDetalle('genin', 'GENÍN', 'bg-teal-500')" id="card-genin" class="relative bg-slate-800 border border-slate-700/60 rounded-2xl p-4 shadow-md overflow-hidden bg-cover bg-center card-ui cursor-pointer"> 
-        <div class="absolute inset-0 bg-slate-900/80 z-0 card-overlay" id="overlay-genin"></div> 
-        <div class="relative z-10"> 
+      <article id="card-genin" class="relative bg-slate-800 border border-slate-700/60 rounded-2xl p-4 shadow-md overflow-hidden bg-cover bg-center card-ui"> 
+        <div class="absolute inset-0 bg-slate-900/80 z-0 card-overlay" id="overlay-genin" onclick="abrirDetalle('genin', 'GENÍN', 'bg-teal-500')"></div> 
+        <div class="relative z-10 pointer-events-none"> 
           <div class="flex justify-between items-center mb-1"> 
             <h4 class="text-base font-bold text-white tracking-tight flex items-center gap-2 title-ui">GENÍN</h4> 
             <span class="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/10 batt-ui"><span id="genin-battery">--</span>%</span> 
           </div> 
           <p id="lbl-genin-sub" class="text-[11px] text-slate-400 font-medium mb-3 sub-ui italic standard-sub">Ficha Técnica en Vivo</p> 
-          <div class="grid grid-cols-2 gap-3"> 
+          <div class="grid grid-cols-2 gap-3 mb-1"> 
             <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Hum. Suelo</span><span class="text-lg font-black text-white font-mono" id="genin-moisture">--%</span></div> 
             <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Temp. Suelo</span><span class="text-lg font-black text-white font-mono" id="genin-temp">--°C</span></div> 
             <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Luz</span><span class="text-lg font-black text-white font-mono" id="genin-lux">--</span></div> 
             <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Fertilidad</span><span class="text-lg font-black text-white font-mono" id="genin-fertility">--</span></div> 
           </div> 
         </div> 
+        <button onclick="event.stopPropagation(); idSensorActivo='genin'; dispararCargaImagen();" class="absolute bottom-3 right-3 h-7 w-7 bg-slate-900/60 backdrop-blur-sm rounded-full text-white border border-white/10 text-xs flex items-center justify-center z-20 cursor-pointer hover:bg-slate-900"><i class="fa-solid fa-plus"></i></button>
       </article> 
 
-      <article onclick="abrirDetalle('plumbago', 'PLUMBAGO', 'bg-blue-500')" id="card-plumbago" class="relative bg-slate-800 border border-slate-700/60 rounded-2xl p-4 shadow-md overflow-hidden bg-cover bg-center card-ui cursor-pointer"> 
-        <div class="absolute inset-0 bg-slate-900/80 z-0 card-overlay" id="overlay-plumbago"></div> 
-        <div class="relative z-10"> 
+      <article id="card-plumbago" class="relative bg-slate-800 border border-slate-700/60 rounded-2xl p-4 shadow-md overflow-hidden bg-cover bg-center card-ui"> 
+        <div class="absolute inset-0 bg-slate-900/80 z-0 card-overlay" id="overlay-plumbago" onclick="abrirDetalle('plumbago', 'PLUMBAGO', 'bg-blue-500')"></div> 
+        <div class="relative z-10 pointer-events-none"> 
           <div class="flex justify-between items-center mb-1"> 
             <h4 class="text-base font-bold text-white tracking-tight flex items-center gap-2 title-ui">PLUMBAGO</h4> 
             <span class="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/10 batt-ui"><span id="plumbago-battery">--</span>%</span> 
           </div> 
           <p id="lbl-plumbago-sub" class="text-[11px] text-slate-400 font-medium mb-3 sub-ui italic standard-sub">Ficha Técnica en Vivo</p> 
-          <div class="grid grid-cols-2 gap-3"> 
+          <div class="grid grid-cols-2 gap-3 mb-1"> 
             <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Hum. Suelo</span><span class="text-lg font-black text-white font-mono" id="plumbago-moisture">--%</span></div> 
             <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Temp. Suelo</span><span class="text-lg font-black text-white font-mono" id="plumbago-temp">--°C</span></div> 
             <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Luz</span><span class="text-lg font-black text-white font-mono" id="plumbago-lux">--</span></div> 
             <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Fertilidad</span><span class="text-lg font-black text-white font-mono" id="plumbago-fertility">--</span></div> 
           </div> 
         </div> 
+        <button onclick="event.stopPropagation(); idSensorActivo='plumbago'; dispararCargaImagen();" class="absolute bottom-3 right-3 h-7 w-7 bg-slate-900/60 backdrop-blur-sm rounded-full text-white border border-white/10 text-xs flex items-center justify-center z-20 cursor-pointer hover:bg-slate-900"><i class="fa-solid fa-plus"></i></button>
       </article> 
     </section> 
 
@@ -146,7 +149,7 @@
     </header> 
 
     <section class="relative w-full aspect-square bg-slate-800 rounded-3xl overflow-hidden shadow-2xl mb-6 flex items-center justify-center card-ui">
-      <div id="plant-image-bg" class="absolute inset-0 bg-cover bg-center"></div>
+      <div id="plant-image-bg" class="absolute inset-0 bg-cover bg-center transition-all duration-300"></div>
       <div id="plant-image-placeholder" class="absolute inset-0 flex flex-col justify-center items-center text-slate-500 bg-slate-800/40">
         <i class="fa-solid fa-seedling text-6xl mb-2"></i>
         <p class="text-xs font-medium tracking-wide">SIN FOTO ASIGNADA</p>
@@ -253,7 +256,6 @@
       if (loader) { loader.classList.add('opacity-0'); setTimeout(() => loader.remove(), 500); } 
     } 
 
-    // Guard síncrono de inicialización limpia
     setTimeout(() => { forzarApagadoSpinner(); }, 1600);
 
     async function cargarDatosMeteo() { 
@@ -310,14 +312,13 @@
       let fallbackTexto = baseDatosCache && baseDatosCache.appConfig ? (baseDatosCache.appConfig[`txt_${idSensorActivo}`] || "Ficha Técnica en Vivo") : "Ficha Técnica en Vivo"; 
       document.getElementById('input-sub-libre').value = fallbackTexto; 
       actualizarValoresPantallaDetalle(); cargarFotoDeMemoria(idSensorActivo); 
-      
-      document.getElementById('view-home').classList.add('view-hidden'); 
+      document.getElementById('view-home').classList.add('view-hidden');  
       document.getElementById('view-detail').classList.remove('view-hidden'); 
       window.scrollTo(0, 0); 
     } 
 
     function actualizarValoresPantallaDetalle() { 
-      try {
+      try { 
         if (!baseDatosCache || !idSensorActivo) return; 
         const esClima = ['uci', 'secadero', 'fontana'].includes(idSensorActivo); 
         if (esClima) { 
@@ -333,7 +334,7 @@
           document.getElementById('detail-fertility').innerHTML = sensor.fertility + ' <span class="text-[10px] font-normal opacity-60">µS</span>'; 
           document.getElementById('detail-battery-lbl').innerText = sensor.battery; 
         } 
-      } catch(err) { console.error("DOM Protected:", err); }
+      } catch(err) { console.error("DOM Protected:", err); } 
     } 
 
     async function salvarTextoFichaNube() { 
@@ -343,7 +344,7 @@
       fetch(API_URL, { method: "POST", body: JSON.stringify({ clave: `txt_${idSensorActivo}`, valor: txt }) }).catch(e => console.error(e)); 
     } 
 
-    function browseGraficaCustom(varSpan) { abrirPantallaGrafica(varSpan); }
+    function browseGraficaCustom(varSpan) { abrirPantallaGrafica(varSpan); } 
 
     function abrirPantallaGrafica(variable) { 
       variableActiva = variable; filtroTiempoActivo = 'dia'; sensoresSeleccionados = [idSensorActivo]; plantaEnFocoParaUmbrales = idSensorActivo;  
@@ -378,12 +379,11 @@
       renderizarPildorasSelectoras(); construirGraficoAnalitico(); 
     } 
 
-    // 🛡️ MOTOR DE HISTÓRICO v5.9.4 CON CORTE DE LÍNEA ESTRICTO EN LA HORA ACTUAL REAL
     function construirGraficoAnalitico() { 
       const ctx = document.getElementById('canvas-chart-js').getContext('2d'); if (miGraficoChartJS) miGraficoChartJS.destroy(); 
       const unidadMedida = SIMBOLOS_UNIDADES[variableActiva] || ""; const configuracionColor = COLORES_VARIABLES[variableActiva]; 
 
-      let etiquetasEjeX = []; let mapeoDatosEstructurado = {}; let hoy = new Date();
+      let etiquetasEjeX = []; let mapeoDatosEstructurado = {}; let hoy = new Date(); 
 
       if (filtroTiempoActivo === 'dia') { 
         for (let h = 0; h <= 24; h++) { etiquetasEjeX.push((h < 10 ? '0'+h : h) + ':00'); } 
@@ -403,10 +403,12 @@
           let acumuladorPorHora = {}; let ultimaHoraConDatos = -1; 
             
           registros.forEach(nodo => { 
-            let f = new Date(nodo.f); if (isNaN(f.getTime())) return;  
-            if (f.getDate() !== hoy.getDate() || f.getMonth() !== hoy.getMonth() || f.getFullYear() !== hoy.getFullYear()) return;
+            let f = new Date(nodo.f); 
+            if (isNaN(f.getTime())) return;  
+            if (f.getDate() !== hoy.getDate() || f.getMonth() !== hoy.getMonth() || f.getFullYear() !== hoy.getFullYear()) return; 
 
-            let h = f.getHours(); if (!acumuladorPorHora[h]) acumuladorPorHora[h] = {}; 
+            let h = f.getHours(); 
+            if (!acumuladorPorHora[h]) acumuladorPorHora[h] = {}; 
               
             sensoresSeleccionados.forEach(id => { 
               if (!acumuladorPorHora[h][id]) acumuladorPorHora[h][id] = []; 
@@ -414,8 +416,8 @@
               let val = null; 
               if (variableActiva === 'bateria') val = nodo[id].battery; 
               else if (variableActiva === 'humedad') val = nodo[id].moisture !== undefined ? nodo[id].moisture : nodo[id].hum; 
-              else if (variableActiva === 'temperatura') {
-                val = nodo[id].temp !== undefined ? nodo[id].temp : (nodo[id].uci_temp || nodo[id].secadero_temp || nodo[id].fontana_temp || baseDatosCache.clima[`${id}_temp`]);
+              else if (variableActiva === 'temperatura') { 
+                val = nodo[id].temp !== undefined ? nodo[id].temp : (nodo[id].uci_temp || nodo[id].secadero_temp || nodo[id].fontana_temp || baseDatosCache.clima[`${id}_temp`]); 
               } else val = nodo[id][variableActiva]; 
                 
               if (val !== null && val !== undefined && val !== 0 && !isNaN(Number(val))) { 
@@ -442,7 +444,8 @@
           let acumuladorPorDia = {}; let ultimoDiaConDatos = -1; 
             
           registros.forEach(nodo => { 
-            let f = new Date(nodo.f); if (isNaN(f.getTime()) || f.getMonth() !== 5) return;  
+            let f = new Date(nodo.f); 
+            if (isNaN(f.getTime()) || f.getMonth() !== 5) return;  
             let d = f.getDate(); 
               
             if (!acumuladorPorDia[d]) acumuladorPorDia[d] = {}; 
@@ -452,7 +455,7 @@
               let val = null; 
               if (variableActiva === 'bateria') val = nodo[id].battery; 
               else if (variableActiva === 'humedad') val = nodo[id].moisture !== undefined ? nodo[id].moisture : nodo[id].hum; 
-              else if (variableActiva === 'temperatura') val = nodo[id].temp !== undefined ? nodo[id].temp : (nodo[id].uci_temp || nodo[id].secadero_temp || nodo[id].fontana_temp || baseDatosCache.clima[`${id}_temp`]);
+              else if (variableActiva === 'temperatura') val = nodo[id].temp !== undefined ? nodo[id].temp : (nodo[id].uci_temp || nodo[id].secadero_temp || nodo[id].fontana_temp || baseDatosCache.clima[`${id}_temp`]); 
               else val = nodo[id][variableActiva]; 
                 
               if (val !== null && val !== undefined && val !== 0 && !isNaN(Number(val))) { 
@@ -489,7 +492,7 @@
               let val = null; 
               if (variableActiva === 'bateria') val = nodo[id].battery; 
               else if (variableActiva === 'humedad') val = nodo[id].moisture !== undefined ? nodo[id].moisture : nodo[id].hum; 
-              else if (variableActiva === 'temperatura') val = nodo[id].temp !== undefined ? nodo[id].temp : (nodo[id].uci_temp || nodo[id].secadero_temp || nodo[id].fontana_temp || baseDatosCache.clima[`${id}_temp`]);
+              else if (variableActiva === 'temperatura') val = nodo[id].temp !== undefined ? nodo[id].temp : (nodo[id].uci_temp || nodo[id].secadero_temp || nodo[id].fontana_temp || baseDatosCache.clima[`${id}_temp`]); 
               else val = nodo[id][variableActiva]; 
                 
               if (val !== null && val !== undefined && val !== 0 && !isNaN(Number(val))) { 
@@ -614,7 +617,6 @@
     function dispararCargaImagen() { document.getElementById('image-picker').value = ""; document.getElementById('image-picker').click(); } 
     function dispararCargaImagenCarga() { document.getElementById('bg-picker-global').value = ""; document.getElementById('bg-picker-global').click(); } 
 
-    // 🛡️ PILAR 2: CANVAS DE COMPRESIÓN CON PERSISTENCIA POST DESTINO GOOGLE SHEETS
     document.getElementById('image-picker').addEventListener('change', function(e) { 
       const file = e.target.files[0]; if (!file || !idSensorActivo) return; 
       const reader = new FileReader(); 
@@ -630,13 +632,12 @@
           cargarFotoEnTarjetaHome(idSensorActivo); 
           
           fetch(API_URL, { method: "POST", body: JSON.stringify({ clave: `img_${idSensorActivo}`, valor: compressedBase64 }) })
-            .catch(err => console.error("Cloud post failed:", err));
+            .catch(err => console.error("Cloud image failed:", err));
             
         }; img.src = event.target.result; 
       }; reader.readAsDataURL(file); 
     }); 
 
-    // 🛡️ PILAR 3: RENDERIZACIÓN VISUAL DE BASE64 RESTAURADA AL COMPLETÓ
     function cargarFotoDeMemoria(idSensor) { 
       const fotoGuardada = localStorage.getItem(`foto_${idSensor}`) || (baseDatosCache && baseDatosCache.appConfig ? baseDatosCache.appConfig[`img_${idSensor}`] : null); 
       if (fotoGuardada) establecerFotoPantalla(fotoGuardada); 
@@ -661,11 +662,11 @@
       }
     } 
 
+    // 🛡️ REGLA MULTIMEDIA RECONSTRUIDA: Inyecta el Base64 de forma persistente en el DOM
     function establecerFotoPantalla(base64Str) { 
       const bg = document.getElementById('plant-image-bg');
       const placeholder = document.getElementById('plant-image-placeholder');
       if (bg) {
-        bg.classList.remove('hidden');
         bg.style.backgroundImage = `url('${base64Str}')`; 
       }
       if (placeholder) placeholder.classList.add('view-hidden'); 
