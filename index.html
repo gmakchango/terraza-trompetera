@@ -4,8 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Terraza Tromptera - Dashboard IoT</title>
+  <!-- Tailwind CSS Pro -->
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <!-- Iconos FontAwesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Carga de Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     .accordion-content { transition: max-height 0.3s ease-out, opacity 0.2s ease-out; max-height: 0; opacity: 0; overflow: hidden; }
@@ -17,6 +20,7 @@
 </head>
 <body id="master-body" class="bg-slate-900 text-slate-100 font-sans min-h-screen antialiased">
 
+  <!-- PANTALLA DE CARGA INICIAL INTERACTIVA NATURAL -->
   <div id="loading-screen" class="fixed inset-0 bg-slate-900 z-50 flex flex-col justify-center items-center gap-4 transition-opacity duration-500 bg-cover bg-center">
     <div id="loading-filter" class="absolute inset-0 bg-slate-900/80 z-0"></div>
     <div class="relative z-10 flex flex-col items-center gap-4">
@@ -25,15 +29,17 @@
     </div>
   </div>
 
+  <!-- VISTA 1: HOME -->
   <div id="view-home" class="max-w-md mx-auto p-4 pb-24">
     <header class="flex justify-between items-center mb-6 pt-2">
       <div>
         <h1 class="text-xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-200 uppercase">TERRAZA TROMPETERA</h1>
-        <p class="text-xs text-slate-400 font-mono">v5.11 Strict Analytics</p>
+        <p class="text-xs text-slate-400 font-mono">v5.12.0 MVP Certified</p>
       </div>
       <span class="px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-sm font-mono">GITHUB LIVE</span>
     </header>
 
+    <!-- BLOQUE CLIMÁTICO SUPERIOR -->
     <section class="bg-gradient-to-br from-slate-800 to-slate-750 rounded-2xl border border-slate-700/50 shadow-xl overflow-hidden mb-6 card-ui">
       <div id="clima-header" class="p-5 flex justify-between items-center cursor-pointer select-none">
         <div class="flex items-center gap-4">
@@ -69,104 +75,69 @@
       </div>
     </section>
 
+    <!-- SECCIÓN MACETAS -->
     <div class="mb-4"><h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest px-1 mb-3 tag-lbl">Macetas y Sustrato</h3></div>
     <section class="space-y-4">
-      <article onclick="abrirDetalle('al_jazz', 'AL JAZZ', 'bg-emerald-500')" id="card-al_jazz" class="relative bg-slate-800 border border-slate-700/60 rounded-2xl p-4 shadow-md overflow-hidden bg-cover bg-center card-ui cursor-pointer">
-        <div class="absolute inset-0 bg-slate-900/80 z-0 card-overlay" id="overlay-al_jazz"></div>
-        <div class="relative z-10">
-          <div class="flex justify-between items-center mb-1">
-            <h4 class="text-base font-bold text-white tracking-tight flex items-center gap-2 title-ui">AL JAZZ</h4>
-            <span class="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/10 batt-ui"><span id="al_jazz-battery">--</span>%</span>
-          </div>
-          <p id="lbl-al_jazz-sub" class="text-[11px] text-slate-400 font-medium mb-3 sub-ui italic standard-sub">Ficha Técnica en Vivo</p>
-          <div class="grid grid-cols-2 gap-3">
-            <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Hum. Suelo</span><span class="text-lg font-black text-white font-mono" id="al_jazz-moisture">--%</span></div>
-            <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Temp. Suelo</span><span class="text-lg font-black text-white font-mono" id="al_jazz-temp">--°C</span></div>
-            <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Luz</span><span class="text-lg font-black text-white font-mono" id="al_jazz-lux">--</span></div>
-            <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Fertilidad</span><span class="text-lg font-black text-white font-mono" id="al_jazz-fertility">--</span></div>
-          </div>
+      <article onclick="abrirDetalle('al_jazz', 'AL JAZZ', 'bg-emerald-500')" id="card-al_jazz" class="relative bg-slate-800 border border-slate-700/60 rounded-2xl p-4 shadow-md card-ui cursor-pointer">
+        <div class="flex justify-between items-center mb-1">
+          <h4 class="text-base font-bold text-white tracking-tight flex items-center gap-2 title-ui">AL JAZZ</h4>
+          <span class="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/10 batt-ui"><span id="al_jazz-battery">--</span>%</span>
+        </div>
+        <p id="lbl-al_jazz-sub" class="text-[11px] text-slate-400 font-medium mb-3 sub-ui italic">Ficha Técnica en Vivo</p>
+        <div class="grid grid-cols-2 gap-3">
+          <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Hum. Suelo</span><span class="text-lg font-black text-white font-mono" id="al_jazz-moisture">--%</span></div>
+          <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Temp. Suelo</span><span class="text-lg font-black text-white font-mono" id="al_jazz-temp">--°C</span></div>
+          <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Luz</span><span class="text-lg font-black text-white font-mono" id="al_jazz-lux">--</span></div>
+          <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Fertilidad</span><span class="text-lg font-black text-white font-mono" id="al_jazz-fertility">--</span></div>
         </div>
       </article>
 
-      <article onclick="abrirDetalle('genin', 'GENÍN', 'bg-teal-500')" id="card-genin" class="relative bg-slate-800 border border-slate-700/60 rounded-2xl p-4 shadow-md overflow-hidden bg-cover bg-center card-ui cursor-pointer">
-        <div class="absolute inset-0 bg-slate-900/80 z-0 card-overlay" id="overlay-genin"></div>
-        <div class="relative z-10">
-          <div class="flex justify-between items-center mb-1">
-            <h4 class="text-base font-bold text-white tracking-tight flex items-center gap-2 title-ui">GENÍN</h4>
-            <span class="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/10 batt-ui"><span id="genin-battery">--</span>%</span>
-          </div>
-          <p id="lbl-genin-sub" class="text-[11px] text-slate-400 font-medium mb-3 sub-ui italic standard-sub">Ficha Técnica en Vivo</p>
-          <div class="grid grid-cols-2 gap-3">
-            <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Hum. Suelo</span><span class="text-lg font-black text-white font-mono" id="genin-moisture">--%</span></div>
-            <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Temp. Suelo</span><span class="text-lg font-black text-white font-mono" id="genin-temp">--°C</span></div>
-            <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Luz</span><span class="text-lg font-black text-white font-mono" id="genin-lux">--</span></div>
-            <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Fertilidad</span><span class="text-lg font-black text-white font-mono" id="genin-fertility">--</span></div>
-          </div>
+      <article onclick="abrirDetalle('genin', 'GENÍN', 'bg-teal-500')" id="card-genin" class="relative bg-slate-800 border border-slate-700/60 rounded-2xl p-4 shadow-md card-ui cursor-pointer">
+        <div class="flex justify-between items-center mb-1">
+          <h4 class="text-base font-bold text-white tracking-tight flex items-center gap-2 title-ui">GENÍN</h4>
+          <span class="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/10 batt-ui"><span id="genin-battery">--</span>%</span>
+        </div>
+        <p id="lbl-genin-sub" class="text-[11px] text-slate-400 font-medium mb-3 sub-ui italic">Ficha Técnica en Vivo</p>
+        <div class="grid grid-cols-2 gap-3">
+          <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Hum. Suelo</span><span class="text-lg font-black text-white font-mono" id="genin-moisture">--%</span></div>
+          <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Temp. Suelo</span><span class="text-lg font-black text-white font-mono" id="genin-temp">--°C</span></div>
+          <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Luz</span><span class="text-lg font-black text-white font-mono" id="genin-lux">--</span></div>
+          <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Fertilidad</span><span class="text-lg font-black text-white font-mono" id="genin-fertility">--</span></div>
         </div>
       </article>
 
-      <article onclick="abrirDetalle('plumbago', 'PLUMBAGO', 'bg-blue-500')" id="card-plumbago" class="relative bg-slate-800 border border-slate-700/60 rounded-2xl p-4 shadow-md overflow-hidden bg-cover bg-center card-ui cursor-pointer">
-        <div class="absolute inset-0 bg-slate-900/80 z-0 card-overlay" id="overlay-plumbago"></div>
-        <div class="relative z-10">
-          <div class="flex justify-between items-center mb-1">
-            <h4 class="text-base font-bold text-white tracking-tight flex items-center gap-2 title-ui">PLUMBAGO</h4>
-            <span class="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/10 batt-ui"><span id="plumbago-battery">--</span>%</span>
-          </div>
-          <p id="lbl-plumbago-sub" class="text-[11px] text-slate-400 font-medium mb-3 sub-ui italic standard-sub">Ficha Técnica en Vivo</p>
-          <div class="grid grid-cols-2 gap-3">
-            <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Hum. Suelo</span><span class="text-lg font-black text-white font-mono" id="plumbago-moisture">--%</span></div>
-            <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Temp. Suelo</span><span class="text-lg font-black text-white font-mono" id="plumbago-temp">--°C</span></div>
-            <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Luz</span><span class="text-lg font-black text-white font-mono" id="plumbago-lux">--</span></div>
-            <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Fertilidad</span><span class="text-lg font-black text-white font-mono" id="plumbago-fertility">--</span></div>
-          </div>
+      <article onclick="abrirDetalle('plumbago', 'PLUMBAGO', 'bg-blue-500')" id="card-plumbago" class="relative bg-slate-800 border border-slate-700/60 rounded-2xl p-4 shadow-md card-ui cursor-pointer">
+        <div class="flex justify-between items-center mb-1">
+          <h4 class="text-base font-bold text-white tracking-tight flex items-center gap-2 title-ui">PLUMBAGO</h4>
+          <span class="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/10 batt-ui"><span id="plumbago-battery">--</span>%</span>
+        </div>
+        <p id="lbl-plumbago-sub" class="text-[11px] text-slate-400 font-medium mb-3 sub-ui italic">Ficha Técnica en Vivo</p>
+        <div class="grid grid-cols-2 gap-3">
+          <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Hum. Suelo</span><span class="text-lg font-black text-white font-mono" id="plumbago-moisture">--%</span></div>
+          <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Temp. Suelo</span><span class="text-lg font-black text-white font-mono" id="plumbago-temp">--°C</span></div>
+          <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Luz</span><span class="text-lg font-black text-white font-mono" id="plumbago-lux">--</span></div>
+          <div class="bg-slate-900/60 p-2.5 rounded-xl border border-slate-700/30 metric-box"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Fertilidad</span><span class="text-lg font-black text-white font-mono" id="plumbago-fertility">--</span></div>
         </div>
       </article>
     </section>
-
-    <div class="fixed bottom-4 left-0 right-0 flex justify-center z-40">
-      <button onclick="toggleVisualMode()" class="px-5 py-2.5 bg-slate-800 text-white rounded-full border border-slate-700 font-bold text-xs tracking-wider uppercase flex items-center gap-2 shadow-2xl transition-all hover:scale-105" id="btn-mode-toggle">
-        <i class="fa-solid fa-sun text-amber-400" id="icon-mode"></i> <span id="lbl-mode-btn">Light Mode</span>
-      </button>
-    </div>
   </div>
 
+  <!-- VISTA 2: DETALLE PLANTA / ZONA -->
   <div id="view-detail" class="max-w-md mx-auto p-4 pb-24 view-hidden">
     <header class="flex items-center gap-4 mb-6 pt-2">
       <button onclick="volverAHome()" class="p-2.5 bg-slate-800 rounded-xl text-slate-400 back-btn"><i class="fa-solid fa-chevron-left text-sm"></i></button>
       <div>
         <h1 class="text-xl font-black tracking-tight text-white uppercase flex items-center gap-2 title-ui"><span id="detail-dot" class="h-2 w-2 rounded-full"></span> <span id="detail-title">PLANTA</span></h1>
-        <input type="text" id="input-sub-libre" maxlength="180" class="text-xs text-slate-400 font-mono bg-transparent border-b border-transparent hover:border-slate-600 focus:border-emerald-500 focus:outline-none w-64 pt-0.5" onchange="salvarTextoFichaNube()">
+        <p class="text-xs text-slate-400 font-mono">Ficha Técnica de Sincronización MVP</p>
       </div>
     </header>
 
-    <section class="relative w-full aspect-square bg-slate-800 rounded-3xl overflow-hidden shadow-2xl mb-6 flex items-center justify-center card-ui">
-      <div id="plant-image-bg" class="absolute inset-0 bg-cover bg-center"></div>
-      <div id="plant-image-placeholder" class="absolute inset-0 flex flex-col justify-center items-center text-slate-500 bg-slate-800/40">
-        <i class="fa-solid fa-seedling text-6xl mb-2"></i>
-        <p class="text-xs font-medium tracking-wide">SIN FOTO ASIGNADA</p>
-      </div>
-      <button onclick="dispararCargaImagen()" class="absolute top-4 right-4 h-10 w-10 bg-slate-900/60 backdrop-blur-md rounded-full text-white text-lg flex items-center justify-center shadow-lg"><i class="fa-solid fa-plus"></i></button>
-
-      <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-slate-900 via-slate-900/70 to-transparent pt-12 z-10">
-        <div class="grid grid-cols-2 gap-2">
-          <div class="bg-white/5 backdrop-blur-md border border-white/10 p-3 rounded-2xl flex items-center gap-3 glass-box">
-            <i class="fa-solid fa-water text-cyan-400 text-lg"></i>
-            <div><span class="text-[10px] uppercase font-bold text-slate-300 block">Humedad</span><span class="text-base font-black text-white font-mono" id="detail-moisture">--%</span></div>
-          </div>
-          <div class="bg-white/5 backdrop-blur-md border border-white/10 p-3 rounded-2xl flex items-center gap-3 glass-box">
-            <i class="fa-solid fa-temperature-half text-orange-400 text-lg"></i>
-            <div><span class="text-[10px] uppercase font-bold text-slate-300 block">TEMPERATURA</span><span class="text-base font-black text-white font-mono" id="detail-temp">--°C</span></div>
-          </div>
-          <div class="bg-white/5 backdrop-blur-md border border-white/10 p-3 rounded-2xl flex items-center gap-3 glass-box">
-            <i class="fa-solid fa-sun text-amber-400 text-lg"></i>
-            <div><span class="text-[10px] uppercase font-bold text-slate-300 block">LUX</span><span class="text-base font-black text-white font-mono" id="detail-lux">--</span></div>
-          </div>
-          <div class="bg-white/5 backdrop-blur-md border border-white/10 p-3 rounded-2xl flex items-center gap-3 glass-box">
-            <i class="fa-solid fa-seedling text-emerald-400 text-lg"></i>
-            <div><span class="text-[10px] uppercase font-bold text-slate-300 block">Fertilidad</span><span class="text-base font-black text-white font-mono" id="detail-fertility">--</span></div>
-          </div>
-        </div>
-      </div>
+    <!-- 🛡️ ESTRUCTURA FIJA RESTAURADA PARA EVITAR PUNTEROS NULOS (Soporta Macetas y Climas) -->
+    <section class="grid grid-cols-2 gap-3 mb-6">
+      <div class="bg-slate-800 p-3 rounded-xl border border-slate-700/40 card-ui"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Humedad</span><span class="text-lg font-black text-white font-mono" id="detail-moisture">--</span></div>
+      <div class="bg-slate-800 p-3 rounded-xl border border-slate-700/40 card-ui"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Temperatura</span><span class="text-lg font-black text-white font-mono" id="detail-temp">--</span></div>
+      <div class="bg-slate-800 p-3 rounded-xl border border-slate-700/40 card-ui"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Luminosidad</span><span class="text-lg font-black text-white font-mono" id="detail-lux">--</span></div>
+      <div class="bg-slate-800 p-3 rounded-xl border border-slate-700/40 card-ui"><span class="text-[10px] uppercase font-bold text-slate-400 block mb-0.5">Fertilidad</span><span class="text-lg font-black text-white font-mono" id="detail-fertility">--</span></div>
     </section>
 
     <div class="grid grid-cols-1 gap-3">
@@ -177,26 +148,27 @@
         </button>
         <div id="monitor-accordion" class="accordion-content bg-slate-900/40 border-t border-slate-700/30">
           <div class="p-4 space-y-2.5">
-            <div onclick="abrirPantallaGrafica('temp')" class="flex justify-between items-center bg-slate-800/60 p-3 rounded-xl border border-slate-700/30 transition-all cursor-pointer inner-card-ui"><span class="text-xs font-bold text-slate-300 uppercase title-ui">Temperatura</span><i class="fa-solid fa-chevron-right text-slate-500 text-[10px]"></i></div>
-            <div onclick="abrirPantallaGrafica('moisture')" class="flex justify-between items-center bg-slate-800/60 p-3 rounded-xl border border-slate-700/30 transition-all cursor-pointer inner-card-ui"><span class="text-xs font-bold text-slate-300 uppercase title-ui">Humedad</span><i class="fa-solid fa-chevron-right text-slate-500 text-[10px]"></i></div>
-            <div onclick="abrirPantallaGrafica('fertility')" class="flex justify-between items-center bg-slate-800/60 p-3 rounded-xl border border-slate-700/30 transition-all cursor-pointer inner-card-ui"><span class="text-xs font-bold text-slate-300 uppercase title-ui">Fertilidad</span><i class="fa-solid fa-chevron-right text-slate-500 text-[10px]"></i></div>
-            <div onclick="abrirPantallaGrafica('lux')" class="flex justify-between items-center bg-slate-800/60 p-3 rounded-xl border border-slate-700/30 transition-all cursor-pointer inner-card-ui"><span class="text-xs font-bold text-slate-300 uppercase title-ui">Luminosidad (LUX)</span><i class="fa-solid fa-chevron-right text-slate-500 text-[10px]"></i></div>
+            <div onclick="abrirPantallaGrafica('temp')" class="flex justify-between items-center bg-slate-800/60 p-3 rounded-xl border border-slate-700/30 cursor-pointer inner-card-ui"><span class="text-xs font-bold text-slate-300 uppercase title-ui">Temperatura</span><i class="fa-solid fa-chevron-right text-slate-500 text-[10px]"></i></div>
+            <div onclick="abrirPantallaGrafica('moisture')" class="flex justify-between items-center bg-slate-800/60 p-3 rounded-xl border border-slate-700/30 cursor-pointer inner-card-ui"><span class="text-xs font-bold text-slate-300 uppercase title-ui">Humedad</span><i class="fa-solid fa-chevron-right text-slate-500 text-[10px]"></i></div>
+            <div onclick="abrirPantallaGrafica('fertility')" class="flex justify-between items-center bg-slate-800/60 p-3 rounded-xl border border-slate-700/30 cursor-pointer inner-card-ui"><span class="text-xs font-bold text-slate-300 uppercase title-ui">Fertilidad</span><i class="fa-solid fa-chevron-right text-slate-500 text-[10px]"></i></div>
+            <div onclick="abrirPantallaGrafica('lux')" class="flex justify-between items-center bg-slate-800/60 p-3 rounded-xl border border-slate-700/30 cursor-pointer inner-card-ui"><span class="text-xs font-bold text-slate-300 uppercase title-ui">Luminosidad (LUX)</span><i class="fa-solid fa-chevron-right text-slate-500 text-[10px]"></i></div>
           </div>
         </div>
       </div>
-      <button onclick="abrirPantallaGrafica('battery')" class="w-full bg-gradient-to-r from-slate-800 to-slate-750 text-white font-bold py-4 px-6 rounded-2xl border border-slate-700/50 flex justify-between items-center shadow-md card-ui title-ui">
+      <button onclick="abrirPantallaGrafica('battery')" class="w-full bg-gradient-to-r from-slate-800 to-slate-750 text-white font-bold py-4 px-6 rounded-2xl border border-slate-700/50 flex justify-between items-center card-ui title-ui">
         <span><i class="fa-solid fa-battery-three-quarters text-amber-400 text-lg mr-2"></i>SALUD BATERÍA (<span id="detail-battery-lbl">--</span>%)</span>
         <i class="fa-solid fa-arrow-right text-slate-500 text-xs"></i>
       </button>
     </div>
   </div>
 
+  <!-- VISTA 3: CANVASES DE GRÁFICAS ANALÍTICAS -->
   <div id="view-charts" class="max-w-md mx-auto p-4 pb-24 view-hidden">
     <header class="flex items-center gap-4 mb-4 pt-2">
       <button onclick="volverADetalle()" class="p-2.5 bg-slate-800 rounded-xl text-slate-400 back-btn"><i class="fa-solid fa-chevron-left text-sm"></i></button>
       <div>
         <h1 class="text-xl font-black text-white uppercase title-ui" id="chart-variable-title">VARIABLE</h1>
-        <p class="text-xs text-slate-400 font-mono">Cursor Magnético de Punto Único</p>
+        <p class="text-xs text-slate-400 font-mono">Cursor Magnético Temporizado</p>
       </div>
     </header>
 
@@ -224,13 +196,14 @@
     </div>
   </div>
 
+  <!-- JAVASCRIPT CORE MAESTRO v5.12.0 -->
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbyi6HCYPtqU1sCDY4UTZIkVKSmE4PaQciTVSlPjUY7yp21EgD-4cipP-_6tJxK8L88iiA/exec";
     let baseDatosCache = null; let idSensorActivo = null; let variableActiva = null; let miGraficoChartJS = null;
     let sensoresSeleccionados = []; let contextoOrigenEsClima = false; let filtroTiempoActivo = 'dia'; 
     let plantaEnFocoParaUmbrales = null; let diccionarioRangosSheet2 = null; let visualLightMode = false;
 
-    // 🛡️ ENRUTAMIENTO ESTRICTO: Mapeo nativo limpio libre de colisiones tipográficas
+    // 🛡️ DICCIONARIO UNIFICADO EN INGLÉS: Controla las claves reales del JSON del Sheets
     const SIMBOLOS_UNIDADES = { temp: "ºC", moisture: "%", humidity: "%", fertility: " µS", lux: " Lux", battery: "%" };
     const COLORES_VARIABLES = { temp: { linea: "#ef4444" }, moisture: { linea: "#3b82f6" }, humidity: { linea: "#3b82f6" }, fertility: { linea: "#10b981" }, lux: { linea: "#eab308" }, battery: { linea: "#f59e0b" } };
 
@@ -252,20 +225,8 @@
       try {
         const respuesta = await fetch(`${API_URL}?_cb=${new Date().getTime()}`);
         baseDatosCache = await respuesta.json();
-        if (!baseDatosCache || !baseDatosCache.success) throw new Error("API Data Error");
+        if (!baseDatosCache || !baseDatosCache.success) throw new Error("API Network Unstable");
         diccionarioRangosSheet2 = baseDatosCache.rangosSheet2;
-
-        if (baseDatosCache.appConfig) {
-          ['al_jazz', 'genin', 'plumbago', 'uci', 'secadero', 'fontana'].forEach(k => {
-            let txt = baseDatosCache.appConfig[`txt_${k}`] || "Ficha Técnica en Vivo";
-            let el = document.getElementById(`lbl-${k}-sub`); if (el) el.innerText = txt;
-          });
-          let imgCargaBase64 = baseDatosCache.appConfig.img_loading;
-          if(imgCargaBase64) {
-            document.getElementById('loading-screen').style.backgroundImage = `url('${imgCargaBase64}')`;
-            document.getElementById('loading-filter').style.backgroundColor = "rgba(15, 23, 42, 0.65)";
-          }
-        }
 
         document.getElementById('avg-temp').innerText = baseDatosCache.clima.avg_temp + "°";
         document.getElementById('avg-hum').innerText = baseDatosCache.clima.avg_hum;
@@ -282,7 +243,6 @@
           document.getElementById(`${id}-temp`).innerText = baseDatosCache[id].temp + "°C";
           document.getElementById(`${id}-lux`).innerText = baseDatosCache[id].lux.toLocaleString('es-ES') + " Lux";
           document.getElementById(`${id}-fertility`).innerHTML = baseDatosCache[id].fertility + ' <span class="text-[10px] font-normal opacity-60">µS</span>';
-          cargarFotoEnTarjetaHome(id);
         });
 
         forzarApagadoSpinner();
@@ -299,45 +259,44 @@
     function ejecutarTransicionDetalle(nombreVisible, colorClase) {
       document.getElementById('detail-title').innerText = nombreVisible;
       const dot = document.getElementById('detail-dot'); if(dot) dot.className = `h-2 w-2 rounded-full ${colorClase}`;
-      let fallbackTexto = baseDatosCache && baseDatosCache.appConfig ? (baseDatosCache.appConfig[`txt_${idSensorActivo}`] || "Ficha Técnica en Vivo") : "Ficha Técnica en Vivo";
-      document.getElementById('input-sub-libre').value = fallbackTexto;
-      actualizarValoresPantallaDetalle(); cargarFotoDeMemoria(idSensorActivo);
+      
+      actualizarValoresPantallaDetalle();
       
       document.getElementById('view-home').classList.add('view-hidden'); 
       document.getElementById('view-detail').classList.remove('view-hidden');
       window.scrollTo(0, 0);
     }
 
-    // 🛡️ HIDRATACIÓN FAIL-SAFE: Protegida contra elementos eliminados del HTML en climas
     function actualizarValoresPantallaDetalle() {
-      try {
-        if (!baseDatosCache || !idSensorActivo) return;
-        const esClima = ['uci', 'secadero', 'fontana'].includes(idSensorActivo);
-        
-        let humEl = document.getElementById('detail-moisture');
-        let tempEl = document.getElementById('detail-temp');
-        
-        if (esClima) {
-          if(humEl) humEl.innerText = baseDatosCache.clima[`${idSensorActivo}_hum`] + "%";
-          if(tempEl) tempEl.innerText = baseDatosCache.clima[`${idSensorActivo}_temp`] + "°C";
-          if (document.getElementById('detail-lux')) document.getElementById('detail-lux').innerText = "-- Lux"; 
-          if (document.getElementById('detail-fertility')) document.getElementById('detail-fertility').innerHTML = "--";
-          if (document.getElementById('detail-battery-lbl')) document.getElementById('detail-battery-lbl').innerText = "99";
-        } else {
-          const sensor = baseDatosCache[idSensorActivo];
-          if(humEl) humEl.innerText = sensor.moisture + "%";
-          if(tempEl) tempEl.innerText = sensor.temp + "°C";
-          if (document.getElementById('detail-lux')) document.getElementById('detail-lux').innerText = sensor.lux.toLocaleString('es-ES') + " Lux";
-          if (document.getElementById('detail-fertility')) document.getElementById('detail-fertility').innerHTML = sensor.fertility + ' <span class="text-[10px] font-normal opacity-60">µS</span>';
-          if (document.getElementById('detail-battery-lbl')) document.getElementById('detail-battery-lbl').innerText = sensor.battery;
-        }
-      } catch(e) { console.error("DOM Protected:", e); }
+      if (!baseDatosCache || !idSensorActivo) return;
+      const esClima = ['uci', 'secadero', 'fontana'].includes(idSensorActivo);
+      
+      let humEl = document.getElementById('detail-moisture');
+      let tempEl = document.getElementById('detail-temp');
+      let luxEl = document.getElementById('detail-lux');
+      let fertEl = document.getElementById('detail-fertility');
+      let battEl = document.getElementById('detail-battery-lbl');
+
+      if (esClima) {
+        if(humEl) humEl.innerText = baseDatosCache.clima[`${idSensorActivo}_hum`] + "%";
+        if(tempEl) tempEl.innerText = baseDatosCache.clima[`${idSensorActivo}_temp`] + "°C";
+        if(luxEl) luxEl.innerText = "N/A (Ambiente)";
+        if(fertEl) fertEl.innerHTML = "N/A (Ambiente)";
+        if(battEl) battEl.innerText = "99";
+      } else {
+        const sensor = baseDatosCache[idSensorActivo];
+        if(humEl) humEl.innerText = sensor.moisture + "%";
+        if(tempEl) tempEl.innerText = sensor.temp + "°C";
+        if(luxEl) luxEl.innerText = sensor.lux.toLocaleString('es-ES') + " Lux";
+        if(fertEl) fertEl.innerHTML = sensor.fertility + ' <span class="text-[10px] font-normal opacity-40">µS</span>';
+        if(battEl) battEl.innerText = sensor.battery;
+      }
     }
 
     function abrirPantallaGrafica(variable) {
       variableActiva = variable; filtroTiempoActivo = 'dia'; sensoresSeleccionados = [idSensorActivo]; plantaEnFocoParaUmbrales = idSensorActivo; 
       
-      let titMap = { temp: "TEMPERATURA", moisture: "HUMEDAD", humidity: "HUMEDAD AMBIENTE", fertility: "FERTILIDAD", lux: "LUMINOSIDAD (LUX)", battery: "SALUD BATERÍA" };
+      let titMap = { temp: "TEMPERATURA CORRECCIÓN", moisture: "HUMEDAD SUSTRATO", humidity: "HUMEDAD AMBIENTE", fertility: "FERTILIDAD", lux: "LUMINOSIDAD (LUX)", battery: "SALUD BATERÍA" };
       document.getElementById('chart-variable-title').innerText = titMap[variable] || variable.toUpperCase();
       
       document.getElementById('view-detail').classList.add('view-hidden'); 
@@ -351,12 +310,12 @@
       if (variableActiva === 'battery') listaDispositivos = ['uci', 'secadero', 'fontana', 'al_jazz', 'genin', 'plumbago'];
 
       listaDispositivos.forEach(id => {
-        const estaActivo = sensoresSeleccionados.includes(id); const esElQueTieneFocoUmbral = id === plantaEnFocoParaUmbrales;
+        const estaActivo = sensoresSeleccionados.includes(id);
         const boton = document.createElement('button'); boton.innerText = id.replace('_', ' ').toUpperCase();
         if (estaActivo) {
-          boton.className = esElQueTieneFocoUmbral && variableActiva !== 'battery' ? "px-3 py-1.5 rounded-full text-xs font-black bg-emerald-500 text-slate-950 border-2 border-white transition-all shadow-md" : "px-3 py-1.5 rounded-full text-xs font-bold bg-emerald-600 text-white transition-all";
+          boton.className = "px-3 py-1.5 rounded-full text-xs font-bold bg-emerald-600 text-white transition-all shadow-md";
         } else {
-          boton.className = visualLightMode ? "px-3 py-1.5 rounded-full text-xs font-medium bg-slate-200 text-slate-600 transition-all" : "px-3 py-1.5 rounded-full text-xs font-medium bg-slate-800 text-slate-400 hover:text-white transition-all";
+          boton.className = "px-3 py-1.5 rounded-full text-xs font-medium bg-slate-800 text-slate-400 hover:text-white transition-all";
         }
         boton.onclick = () => toggleSeleccionSensorPildora(id); contenedor.appendChild(boton);
       });
@@ -370,7 +329,7 @@
       renderizarPildorasSelectoras(); construirGraficoAnalitico();
     }
 
-    // 🛡️ MOTOR GRÁFICO MAESTRO SANEADO v5.11 (Resuelve Climas y Fecha de Hoy Estricta)
+    // 🛡️ MOTOR DE CÓNYUGE ANALÍTICO CON FILTRO "HOY ES HOY" ESTRICTO Y SOPORTE DE CLIMAS
     function construirGraficoAnalitico() {
       const ctx = document.getElementById('canvas-chart-js').getContext('2d'); if (miGraficoChartJS) miGraficoChartJS.destroy();
       const unidadMedida = SIMBOLOS_UNIDADES[variableActiva] || ""; const configuracionColor = COLORES_VARIABLES[variableActiva];
@@ -398,7 +357,7 @@
           registros.forEach(nodo => {
             let f = new Date(nodo.f); if (isNaN(f.getTime())) return; 
             
-            // 🛡️ FILTRO REGLA DE ORO: Evita arrastrar las 22:00h de días pasados. Hoy es hoy.
+            // 🛡️ REGLA SOBERANA: Excluye filas de días pasados para calcular la última lectura real de hoy
             if (f.getDate() !== hoy.getDate() || f.getMonth() !== hoy.getMonth() || f.getFullYear() !== hoy.getFullYear()) return;
             
             let h = f.getHours(); if (!acumuladorPorHora[h]) acumuladorPorHora[h] = {};
@@ -406,14 +365,21 @@
             sensoresSeleccionados.forEach(id => {
               if (!acumuladorPorHora[h][id]) acumuladorPorHora[h][id] = [];
               
-              // Normalización de claves para soportar Macetas (.temp) y Climas (.temp) unificados
+              // Traducción y normalización dinámica de propiedades (Maceta .temp / Clima .uci_temp)
               let targetKey = variableActiva;
               if (targetKey === 'moisture' && nodo[id].moisture === undefined) targetKey = 'hum';
               if (targetKey === 'humidity') targetKey = 'hum';
               
-              let rawVal = nodo[id][targetKey];
-              let val = (rawVal !== null && rawVal !== undefined && !isNaN(Number(rawVal))) ? Number(rawVal) : null;
+              // Soporte de claves cruzadas para Climas Ambiente en dbHistorico
+              let rawVal = null;
+              if (nodo[id] && nodo[id][targetKey] !== undefined) {
+                rawVal = nodo[id][targetKey];
+              } else if (['uci','secadero','fontana'].includes(id)) {
+                // Fallback si el backend inyectó en plano (uci_temp / uci_hum)
+                rawVal = nodo[`${id}_${targetKey === 'temp' ? 'temp':'hum'}`];
+              }
               
+              let val = (rawVal !== null && rawVal !== undefined && !isNaN(Number(rawVal))) ? Number(rawVal) : null;
               if (val !== null && val !== 0) {
                 acumuladorPorHora[h][id].push(val);
                 if (h > ultimaHoraConDatos) ultimaHoraConDatos = h;
@@ -422,7 +388,7 @@
           });
 
           for (let h = 0; h <= 24; h++) {
-            if (h > ultimaHoraConDatos) break; // 🛡️ CORTE RADICAL: Detiene la línea en seco en las 18:00h
+            if (h > ultimaHoraConDatos) break; // 🛡️ CORTE RADICAL: Detiene el renderizado a las 18h clavas de hoy
             if (acumuladorPorHora[h]) {
               sensoresSeleccionados.forEach(id => {
                 let listado = acumuladorPorHora[h][id] || [];
@@ -442,12 +408,11 @@
             
             sensoresSeleccionados.forEach(id => {
               if (!acumuladorPorDia[d][id]) acumuladorPorDia[d][id] = [];
-              
               let targetKey = variableActiva;
               if (targetKey === 'moisture' && nodo[id].moisture === undefined) targetKey = 'hum';
               if (targetKey === 'humidity') targetKey = 'hum';
               
-              let rawVal = nodo[id][targetKey];
+              let rawVal = (nodo[id] && nodo[id][targetKey] !== undefined) ? nodo[id][targetKey] : nodo[`${id}_${targetKey === 'temp' ? 'temp':'hum'}`];
               let val = (rawVal !== null && rawVal !== undefined && !isNaN(Number(rawVal))) ? Number(rawVal) : null;
               
               if (val !== null && val !== 0) {
@@ -479,12 +444,11 @@
             
             sensoresSeleccionados.forEach(id => {
               if (!acumuladorPorMes[xPos][id]) acumuladorPorMes[xPos][id] = [];
-              
               let targetKey = variableActiva;
               if (targetKey === 'moisture' && nodo[id].moisture === undefined) targetKey = 'hum';
               if (targetKey === 'humidity') targetKey = 'hum';
               
-              let rawVal = nodo[id][targetKey];
+              let rawVal = (nodo[id] && nodo[id][targetKey] !== undefined) ? nodo[id][targetKey] : nodo[`${id}_${targetKey === 'temp' ? 'temp':'hum'}`];
               let val = (rawVal !== null && rawVal !== undefined && !isNaN(Number(rawVal))) ? Number(rawVal) : null;
               
               if (val !== null && val !== 0) {
@@ -527,7 +491,7 @@
 
       let finalMinY = 0; 
       let esPorcentaje = variableActiva === 'moisture' || variableActiva === 'humidity' || variableActiva === 'battery';
-      let finalMaxY = esPorcentaje ? 100 : rango.max;
+      let finalMaxY = esPorcentaje ? 100 : 50;
 
       if (totalPuntosEnCanvas.length > 0 && !esPorcentaje) {
         finalMaxY = Math.max(...totalPuntosEnCanvas) + 5;
@@ -536,77 +500,37 @@
       miGraficoChartJS = new Chart(ctx, {
         type: 'line', data: { labels: etiquetasEjeX, datasets: datasetsLineas },
         options: {
-          responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
+          responsive: true, maintainAspectRatio: false,
           plugins: {
             legend: { display: false },
             tooltip: {
-              enabled: true, mode: 'index', intersect: false, 
-              backgroundColor: visualLightMode ? 'rgba(255, 255, 255, 0.95)' : 'rgba(15, 23, 42, 0.95)',
-              titleColor: visualLightMode ? '#334155' : '#94a3b8', bodyColor: visualLightMode ? '#0f172a' : '#ffffff',
-              borderColor: 'rgba(51, 65, 85, 0.2)', borderWidth: 1, displayColors: false,
-              callbacks: { title: function(context) { return `Registro: ${context[0].label}`; }, label: function(context) { return `Media Real: ${Number(context.raw).toFixed(2)} ${unidadMedida}`; } },
-              external: function(context) {
-                const tooltipModel = context.tooltip; if (tooltipModel.opacity === 0) return;
-                let txtLectura = ""; tooltipModel.dataPoints.forEach(pt => { txtLectura += `${pt.dataset.label}: ${pt.raw !== null ? Number(pt.raw).toFixed(2) + unidadMedida : '--'} | `; });
-                document.getElementById('scrub-value').innerText = txtLectura.slice(0, -3);
-                document.getElementById('scrub-time').innerText = `Punto Eje X: ${tooltipModel.dataPoints[0].label}`;
-              }
+              enabled: true, mode: 'index', intersect: false,
+              callbacks: { label: function(context) { return `Media Real: ${Number(context.raw).toFixed(2)} ${unidadMedida}`; } }
             }
           },
           scales: {
-            x: { grid: { display: false }, ticks: { color: visualLightMode ? '#475569' : '#94a3b8', font: { family: 'monospace', size: 10 } } },
-            y: { grid: { color: visualLightMode ? 'rgba(0,0,0,0.04)' : 'rgba(148,163,184,0.06)' }, ticks: { color: visualLightMode ? '#475569' : '#94a3b8', font: { family: 'monospace', size: 10 } }, min: finalMinY, max: Math.round(finalMaxY) }
+            x: { grid: { display: false }, ticks: { color: '#94a3b8', font: { family: 'monospace', size: 10 } } },
+            y: { grid: { color: 'rgba(148,163,184,0.06)' }, ticks: { color: '#94a3b8', font: { family: 'monospace', size: 10 } }, min: finalMinY, max: Math.round(finalMaxY) }
           }
         }
       });
-    }
-
-    function toggleVisualMode() {
-      visualLightMode = !visualLightMode;
-      const b = document.getElementById('master-body'); const btn = document.getElementById('btn-mode-toggle');
-      const ico = document.getElementById('icon-mode'); const lbl = document.getElementById('lbl-mode-btn');
-
-      if(visualLightMode) {
-        b.className = "bg-slate-50 text-slate-900 font-sans min-h-screen antialiased";
-        btn.className = "px-5 py-2.5 bg-white text-slate-900 rounded-full border border-slate-300 font-bold text-xs flex items-center gap-2 shadow-2xl transition-all";
-        ico.className = "fa-solid fa-moon text-indigo-600"; lbl.innerText = "Dark Mode";
-        document.querySelectorAll('.card-ui').forEach(el => { el.style.backgroundColor = "#ffffff"; el.style.borderColor = "#cbd5e1"; });
-        document.querySelectorAll('.metric-box').forEach(el => { el.style.backgroundColor = "#f1f5f9"; el.style.borderColor = "#e2e8f0"; });
-        document.querySelectorAll('.title-ui').forEach(el => el.style.color = "#0f172a");
-        document.querySelectorAll('.sub-ui').forEach(el => el.style.color = "#475569");
-      } else {
-        b.className = "bg-slate-900 text-slate-100 font-sans min-h-screen antialiased";
-        btn.className = "px-5 py-2.5 bg-slate-800 text-white rounded-full border border-slate-700 font-bold text-xs flex items-center gap-2 shadow-2xl transition-all";
-        ico.className = "fa-solid fa-sun text-amber-400"; lbl.innerText = "Light Mode";
-        document.querySelectorAll('.card-ui').forEach(el => { el.style.backgroundColor = "#1e293b"; el.style.borderColor = "rgba(51, 65, 85, 0.6)"; });
-        document.querySelectorAll('.metric-box').forEach(el => { el.style.backgroundColor = "rgba(15, 23, 42, 0.60)"; el.style.borderColor = "rgba(51, 65, 85, 0.3)"; });
-        document.querySelectorAll('.title-ui').forEach(el => el.style.color = "#ffffff");
-        document.querySelectorAll('.sub-ui').forEach(el => el.style.color = "#94a3b8");
-      }
-      if(miGraficoChartJS) construirGraficoAnalitico();
-    }
-
-    async function salvarTextoFichaNube() {
-      const txt = document.getElementById('input-sub-libre').value;
-      if(baseDatosCache && baseDatosCache.appConfig) baseDatosCache.appConfig[`txt_${idSensorActivo}`] = txt;
-      let elHome = document.getElementById(`lbl-${idSensorActivo}-sub`); if (elHome) elHome.innerText = txt;
-      fetch(API_URL, { method: "POST", body: JSON.stringify({ clave: `txt_${idSensorActivo}`, valor: txt }) }).catch(e => console.error(e));
     }
 
     function cambiarFiltroTiempo(filtro) { filtroTiempoActivo = filtro; ['dia', 'mes', 'ano'].forEach(f => { const btn = document.getElementById(`btn-time-${f}`); if(btn) btn.className = f === filtro ? "py-2 rounded-lg text-xs font-bold bg-slate-700 text-white uppercase tracking-wider" : "py-2 rounded-lg text-xs font-medium text-slate-400 uppercase tracking-wider"; }); renderizarPildorasSelectoras(); construirGraficoAnalitico(); }
     function volverAHome() { idSensorActivo = null; document.getElementById('view-detail').className = 'max-w-md mx-auto p-4 pb-24 view-hidden'; document.getElementById('view-home').className = 'max-w-md mx-auto p-4 pb-24'; if(baseDatosCache) cargarDatosMeteo(); }
     function volverADetalle() { document.getElementById('view-charts').className = 'max-w-md mx-auto p-4 pb-24 view-hidden'; document.getElementById('view-detail').className = 'max-w-md mx-auto p-4 pb-24'; }
     function toggleAcordeonMonitorizacion() { const acc = document.getElementById('monitor-accordion'); const arrow = document.getElementById('monitor-arrow'); if (acc.classList.contains('open')) { acc.classList.remove('open'); arrow.classList.remove('rotate-180'); } else { acc.classList.add('open'); arrow.classList.add('rotate-180'); } }
-    function dispararCargaImagen() { document.getElementById('image-picker').value = ""; document.getElementById('image-picker').click(); }
-    function dispararCargaImagenCarga() { document.getElementById('bg-picker-global').value = ""; document.getElementById('bg-picker-global').click(); }
 
     window.addEventListener('DOMContentLoaded', () => {
       cargarDatosMeteo();
-      document.getElementById('clima-header').addEventListener('click', () => {
-        const acc = document.getElementById('clima-accordion'); const arrow = document.getElementById('clima-arrow');
-        if (acc.classList.contains('open')) { acc.classList.remove('open'); arrow.classList.remove('rotate-180'); } 
-        else { acc.classList.add('open'); arrow.classList.add('rotate-180'); }
-      });
+      const elClima = document.getElementById('clima-header');
+      if(elClima) {
+        elClima.addEventListener('click', () => {
+          const acc = document.getElementById('clima-accordion'); const arrow = document.getElementById('clima-arrow');
+          if (acc.classList.contains('open')) { acc.classList.remove('open'); arrow.classList.remove('rotate-180'); } 
+          else { acc.classList.add('open'); arrow.classList.add('rotate-180'); }
+        });
+      }
     });
   </script>
 </body>
